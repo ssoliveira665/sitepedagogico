@@ -239,7 +239,7 @@
                         <!-- Data de Nascimento -->
                         <div class="col-md-4 mb-3">
                             <label for="dataNascimento" class="form-label">Data de Nascimento</label>
-                            <input type="date" class="form-control" id="dataNascimento" name="dataNascimento" required onchange="verificarIdade()">
+                            <input type="date" class="form-control" id="data_nascimento" name="data_nascimento" required onchange="verificarIdade()">
                         </div>
 
                           <!-- Radio buttons para maior de idade, inicialmente desabilitados -->
@@ -270,14 +270,14 @@
                        
 
                         <div class="col-md-4 mb-3">
-                            <label for="cpfResponsavel" class="form-label">CPF do Responsável Legal</label>
-                            <input type="text" class="form-control" id="cpfResponsavel" name="cpfResponsavel" disabled>
+                            <label for="cpf_responsavel" class="form-label">CPF do Responsável</label>
+                        <input type="text" class="form-control" id="cpf_responsavel" name="cpf_responsavel" disabled>
                         </div>
                         
                         <!-- Nome do Responsável legal -->
                         <div class="col-md-4 mb-3">
-                            <label for="rgResponsavel" class="form-label">RG do Responsável Legal</label>
-                            <input type="text" class="form-control" id="rgResponsavel" name="rgResponsavel" disabled>
+                            <label for="rg_responsavel" class="form-label">RG do Responsável</label>
+                        <input type="text" class="form-control" id="rg_responsavel" name="rg_responsavel" disabled>
                         </div>
 
                         <!-- Tipo de Responsável Legal -->
@@ -1300,7 +1300,7 @@ window.onload = function() {
 <!-- JavaScript -->
 <script>
     function verificarIdade() {
-        const dataNascimento = new Date(document.getElementById('dataNascimento').value);
+        const dataNascimento = new Date(document.getElementById('data_nascimento').value);
         const dataLimite = new Date('2024-12-01');  // Data de verificação 01/12/2024
         const idadeLimite15 = 15;
         const idadeLimite18 = 18;
@@ -1326,8 +1326,8 @@ window.onload = function() {
     
             // Habilitar os campos do Responsável Legal
             document.getElementById('nomeResponsavel').disabled = false;
-            document.getElementById('cpfResponsavel').disabled = false;
-            document.getElementById('rgResponsavel').disabled = false;
+            document.getElementById('cpf_responsavel').disabled = false;
+            document.getElementById('rg_responsavel').disabled = false;
             document.getElementById('tipoResponsavel').disabled = false;
     
         } else if (idade >= idadeLimite18) {
@@ -1338,8 +1338,8 @@ window.onload = function() {
     
             // Desabilitar os campos do Responsável Legal
             document.getElementById('nomeResponsavel').disabled = true;
-            document.getElementById('cpfResponsavel').disabled = true;
-            document.getElementById('rgResponsavel').disabled = true;
+            document.getElementById('cpf_responsavel').disabled = true;
+            document.getElementById('rg_responsavel').disabled = true;
             document.getElementById('tipoResponsavel').disabled = true;
         } else {
             // Se o candidato for menor de 15 anos, desabilitar ambos os radios e o formulário

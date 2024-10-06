@@ -8,7 +8,7 @@ class Usuario(AbstractUser):
     cpf = models.CharField(max_length=11, unique=True)  # CPF único
     email = models.EmailField(unique=True)
     data_cadastro = models.DateTimeField(auto_now_add=True)
-    data_nascimento = models.DateField(null=True, blank=True)  # Data de Nascimento
+    data_nascimento = models.DateField()  # Campo de data de nascimento
     telefone = models.CharField(max_length=15, null=True, blank=True)  # Telefone do Candidato
     telefone_contato_2 = models.CharField(max_length=15, null=True, blank=True)  # Telefone de Contato 2
     telefone_secundario = models.CharField(max_length=15, null=True, blank=True)
@@ -109,6 +109,8 @@ class Inscricao(models.Model):
     prova_realizada = models.BooleanField(default=False)  # Example field definition
     nota = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # Add nota field
     aprovado = models.BooleanField(default=False)  # Add this field
+    cpf_responsavel = models.CharField(max_length=11, null=True, blank=True)  # Novo campo
+    rg_responsavel = models.CharField(max_length=12, null=True, blank=True)   # Novo campo
     
 
 

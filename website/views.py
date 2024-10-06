@@ -257,20 +257,23 @@ def imprimir_inscricao(request, inscricao_id):
     # Espaçamento antes das tabelas
     pdf.setFont("Helvetica", 12)
 
+    # Ajuste: Verifica se 'data_nascimento' existe antes de usar strftime
+    data_nascimento = inscricao.candidato.data_nascimento.strftime('%d/%m/%Y') if inscricao.candidato.data_nascimento else "Data não informada"
+
     # --- Tabela de Dados Pessoais ---
     dados_pessoais = [
-    ["Nome Completo:", inscricao.candidato.nome_completo],
-    ["E-Mail:", inscricao.candidato.email],
-    ["CPF:", inscricao.candidato.cpf],
-    ["Data de Nascimento:", inscricao.candidato.data_nascimento.strftime('%d/%m/%Y')],
-    ["Candidato é maior de 18 anos?", 'Sim' if Usuario.maior_de_18 else 'Não'],
-    ["Nome do Responsável Legal:", inscricao.responsavel_legal],
-    ["Tipo de Responsável Legal:", inscricao.tipo_responsavel],
-    ["Telefone Principal:", inscricao.telefone],
-    ["Telefone Secundário:", inscricao.telefone_secundario],
-    ["Possui Necessidade Especial?", 'Sim' if inscricao.necessidade_especial else 'Não'],  
-    ["Tipo de Necessidade Especial:", inscricao.tipo_necessidade_especial if inscricao.necessidade_especial else 'N/A'],
-    ["Etapa Pretendida para Matrícula:", inscricao.etapa_pretendida]  # New field
+        ["Nome Completo:", inscricao.candidato.nome_completo],
+        ["E-Mail:", inscricao.candidato.email],
+        ["CPF:", inscricao.candidato.cpf],
+        ["Data de Nascimento:", data_nascimento],
+        ["Candidato é maior de 18 anos?", 'Sim' if Usuario.maior_de_18 else 'Não'],
+        ["Nome do Responsável Legal:", inscricao.responsavel_legal],
+        ["Tipo de Responsável Legal:", inscricao.tipo_responsavel],
+        ["Telefone Principal:", inscricao.telefone],
+        ["Telefone Secundário:", inscricao.telefone_secundario],
+        ["Possui Necessidade Especial?", 'Sim' if inscricao.necessidade_especial else 'Não'],  
+        ["Tipo de Necessidade Especial:", inscricao.tipo_necessidade_especial if inscricao.necessidade_especial else 'N/A'],
+        ["Etapa Pretendida para Matrícula:", inscricao.etapa_pretendida]  # New field
     ]
     personal_table = Table(dados_pessoais, colWidths=[200, 300])
     personal_table.setStyle(TableStyle([
@@ -351,6 +354,7 @@ def imprimir_inscricao(request, inscricao_id):
     # Retorna o PDF como resposta HTTP
     buffer.seek(0)
     return HttpResponse(buffer, content_type='application/pdf')
+
 #**********************************************************************************************************
 
 class CustomLoginView(LoginView):
