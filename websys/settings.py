@@ -134,13 +134,17 @@ AUTHENTICATION_BACKENDS = [
 
 
 
-EMAIL_BACKEND = 'django_ses.SESBackend'
-AWS_ACCESS_KEY_ID = 'your_aws_access_key'
-AWS_SECRET_ACCESS_KEY = 'your_aws_secret_key'
-AWS_SES_REGION_NAME = 'us-east-1'  # or your preferred region
-AWS_SES_REGION_ENDPOINT = 'email.us-east-1.amazonaws.com'
+# EMAIL_BACKEND = 'django_ses.SESBackend'
+# AWS_ACCESS_KEY_ID = 'your_aws_access_key'
+# AWS_SECRET_ACCESS_KEY = 'your_aws_secret_key'
+# AWS_SES_REGION_NAME = 'us-east-1'  # or your preferred region
+# AWS_SES_REGION_ENDPOINT = 'email.us-east-1.amazonaws.com'
 
-
+EMAIL_HOST='smtp.gmail.com'
+EMAIL_PORT=587
+EMAIL_USE_TSL=True
+EMAIL_HOST_USER='shelton.oliveira.barbosa@gmail.com'
+EMAIL_HOST_PASSWORD='@Drik16091985'
 
 
 
