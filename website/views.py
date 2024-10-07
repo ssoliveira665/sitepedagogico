@@ -1,3 +1,5 @@
+import os
+from django.conf import settings
 from django.shortcuts import render, redirect
 from .models import Usuario
 from django.contrib import messages
@@ -243,7 +245,13 @@ def imprimir_inscricao(request, inscricao_id):
     margin = 50
 
     # Cabeçalho com logo da secretaria e título centralizado
-    logo_path = 'C:\\Users\\sysco\\Desktop\\siteDiagnosis\\websys\\static\\img\\logoEsquerda.png'
+    logo_path = os.path.join(settings.STATIC_ROOT, 'img', 'logoEsquerda.png')
+
+
+
+
+
+
     if logo_path:
         pdf.drawImage(logo_path, margin, height - 95, width=80, height=80)
     

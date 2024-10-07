@@ -113,6 +113,9 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',  # Ou 'static/' dependendo de como está o BASE_DIR
 ]
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
 
 
 # Default primary key field type
