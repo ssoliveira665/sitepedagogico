@@ -1,3 +1,20 @@
+# Ignore Python virtual environment and compiled files
+venv/
 *.pyc
 __pycache__/
-websys/venv/
+
+# Ignore SQLite database files
+*.sqlite3
+*.sqlite3.sqbpro
+
+# Ignore environment and configuration files
+.env
+.venv/
+
+# Ignore Docker files if needed
+docker-compose.yml
+Dockerfile
+
+# Ignore static and build directories
+static/
+staticfiles/
