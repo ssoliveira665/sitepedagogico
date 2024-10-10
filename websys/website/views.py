@@ -51,6 +51,13 @@ from django.contrib.auth import views as auth_views
 from django.core.mail import send_mail
 import csv
 
+from django.contrib.auth import get_user_model
+
+import json
+from .forms import InscricaoSearchForm
+from .forms import InscricaoFilterForm  # Importe o formulário de filtro
+
+
 
 
 def cadastro_candidato(request):
@@ -700,12 +707,22 @@ def test_email(request):
     return HttpResponse('Email sent!')
 #**********************************************************************************************************
 
-# Only allow staff users to access
-@user_passes_test(lambda u: u.is_staff)
-def admin_dashboard_view(request):
-    inscricoes = Inscricao.objects.all()  # Fetch all registrations or any other data
-    context = {'inscricoes': inscricoes}
-    return render(request, 'admin/admin_dashboard.html', context)
+@user_passes_test(lambda u: u.is_superuser)  # Ensure only superusers can access
+def admin_dashboard(request):
+    usuarios = User.objects.all()  # Obtém todos os usuários
+    inscricoes = Inscricao.objects.all()  # Obtendo todas as inscrições do banco de dados
+    total_inscritos = Inscricao.objects.count()  # Conta o número total de registros
+    registros_aguardando = Inscricao.objects.filter(status='aguardando').count()  # Ajuste para o campo de status
+    usuarios_ativos = User.objects.filter(is_active=True).count()  # Contagem de usuários ativos
+    context = {
+        'usuarios': usuarios,
+        'inscricoes': inscricoes,  # Passando os dados de inscrições para o template
+        'total_inscritos': total_inscritos,
+        'registros_aguardando': registros_aguardando,
+        'usuarios_ativos': usuarios_ativos,
+    }
+    return render(request, 'admin_dashboard.html', context)
+#**********************************************************************************************************
 
 
 @user_passes_test(lambda u: u.is_staff)
@@ -822,3 +839,92 @@ def visualizar_inscricao(request, id):
 def acompanhar_inscricao(request, id):
     inscricao = get_object_or_404(Inscricao, id=id)
     return render(request, 'acompanhar_inscricao.html', {'inscricao': inscricao})
+#**********************************************************************************************************
+
+User = get_user_model()
+
+def verify_cpf_ajax(request):
+    if request.method == 'POST':
+        cpf = request.POST.get('cpf')
+        try:
+            # Fetch user by CPF and check if they are a superuser
+            user = User.objects.get(cpf=cpf)
+            if user.is_superuser:
+                return JsonResponse({'status': 'success', 'redirect_url': '/admin-login/'})
+            else:
+                return JsonResponse({'status': 'error', 'message': 'CPF válido, mas o usuário não é um administrador.'})
+        except User.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'CPF não encontrado.'})
+    
+    return JsonResponse({'status': 'error', 'message': 'Método de requisição inválido.'})
+
+#**********************************************************************************************************
+
+def verificar_cpf(request):
+    if request.method == 'POST':
+        cpf = request.POST.get('cpf')
+        try:
+            # Verify if the CPF exists and the user is a superuser
+            user = Usuario.objects.get(cpf=cpf)
+            if user.is_superuser:
+                return JsonResponse({'status': 'success', 'redirect_url': '/admin-login/'})
+            else:
+                return JsonResponse({'status': 'error', 'message': 'CPF válido, mas o usuário não é um administrador.'})
+        except Usuario.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'CPF não encontrado.'})
+
+    return JsonResponse({'status': 'error', 'message': 'Método de requisição inválido.'})
+#**********************************************************************************************************
+
+def admin_login_view(request):
+    if request.method == 'POST':
+        cpf = request.POST.get('username')  # Assuming CPF is entered in 'username' field
+        password = request.POST.get('password')
+
+        # Authenticate user by CPF and password
+        user = authenticate(request, username=cpf, password=password)
+
+        if user is not None:
+            # Check if the authenticated user is a superuser
+            if user.is_superuser:
+                login(request, user)
+                # Redirect to the admin dashboard if the user is a superuser
+                return redirect('admin_dashboard')
+            else:
+                messages.error(request, 'CPF válido, mas você não é um administrador.')
+        else:
+            messages.error(request, 'CPF ou senha inválidos.')
+
+    # Render the admin login template for GET requests or if authentication fails
+    return render(request, 'registration/admin_login.html')
+#**********************************************************************************************************
+def listar_inscricoes(request):
+    inscricoes = Inscricao.objects.all()  # Busque todas as inscrições inicialmente
+    
+    # Se os filtros forem aplicados
+    nome_candidato = request.GET.get('nome_candidato')
+    cpf = request.GET.get('cpf')
+    status = request.GET.get('status')
+    data_inicio = request.GET.get('data_inicio')
+    data_fim = request.GET.get('data_fim')
+
+    # Filtros dinâmicos
+    if nome_candidato:
+        inscricoes = inscricoes.filter(candidato__nome_completo__icontains=nome_candidato)
+    if cpf:
+        inscricoes = inscricoes.filter(candidato__cpf__icontains=cpf)
+    if status:
+        inscricoes = inscricoes.filter(status=status)
+    if data_inicio:
+        inscricoes = inscricoes.filter(data_inscricao__gte=data_inicio)
+    if data_fim:
+        inscricoes = inscricoes.filter(data_inscricao__lte=data_fim)
+    
+    # Passe o formulário e as inscrições filtradas para o template
+    form = InscricaoFilterForm(request.GET or None)
+    context = {
+        'inscricoes': inscricoes,
+        'form': form,
+    }
+    
+    return render(request, 'inscricoes/listar.html', context)

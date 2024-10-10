@@ -31,3 +31,23 @@ class CPFLoginForm(AuthenticationForm):
             'placeholder': 'Digite sua senha',
             'class': 'form-control'
         })
+#**********************************************************************************************************
+
+class InscricaoSearchForm(forms.Form):
+    nome_candidato = forms.CharField(required=False, label='Nome do Candidato', widget=forms.TextInput(attrs={'class': 'form-control'}))
+    cpf = forms.CharField(required=False, label='CPF', widget=forms.TextInput(attrs={'class': 'form-control'}))
+    data_inicio = forms.DateField(required=False, label='Data Início', widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}))
+    data_fim = forms.DateField(required=False, label='Data Fim', widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}))
+    status = forms.ChoiceField(required=False, choices=[('', 'Todos'), ('Ativo', 'Ativo'), ('Inativo', 'Inativo')], widget=forms.Select(attrs={'class': 'form-control'}))
+#**********************************************************************************************************
+
+class InscricaoFilterForm(forms.Form):
+    nome_candidato = forms.CharField(required=False, label="Nome do Candidato")
+    cpf = forms.CharField(required=False, label="CPF")
+    status = forms.ChoiceField(
+        required=False,
+        choices=[('aprovado', 'Aprovado'), ('pendente', 'Pendente')],
+        label="Status da Inscrição"
+    )
+    data_inicio = forms.DateField(required=False, label="Data de Início", widget=forms.TextInput(attrs={'type': 'date'}))
+    data_fim = forms.DateField(required=False, label="Data de Fim", widget=forms.TextInput(attrs={'type': 'date'}))

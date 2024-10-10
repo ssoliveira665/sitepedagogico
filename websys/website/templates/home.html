@@ -133,15 +133,54 @@
 
                 <!-- Administrator Link always visible -->
                 <li class="nav-item">
-                    <a href="{% url 'admin_login' %}" class="nav-link">
+                    <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#cpfModal">
                         <i class="fas fa-user-shield"></i> Administrador
                     </a>
                 </li>
+                
+                
 
             </ul>
         </div>
     </div>
 </nav>
+
+
+<!-- CPF Administrador Modal -->
+<!-- CPF Modal -->
+<div class="modal fade" id="cpfModal" tabindex="-1" aria-labelledby="cpfModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="cpfModalLabel">Verificar CPF</h5>
+        </div>
+        <div class="modal-body">
+          <form id="cpfForm">
+            <div class="form-group">
+              <label for="cpfInput">Digite seu CPF:</label>
+              <input type="text" class="form-control" id="cpfInput" name="cpf" placeholder="000.000.000-00" required>
+            </div>
+            <div id="cpfErrorMessage" class="text-danger"></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancelBtn">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="verifyCpfBtn">Verificar</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+  
+
+<!-- Trigger Button for Modal
+<li class="nav-item">
+    <a href="#" class="nav-link" data-toggle="modal" data-target="#cpfVerificationModal">
+        <i class="fas fa-user-shield"></i> Administrador
+    </a>
+</li> -->
+
 
 
 
@@ -999,6 +1038,10 @@
             <script src="{% static 'js/search.js' %}"></script> <!-- This assumes you have a search.js file -->
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
+            <!-- Bootstrap JS -->
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
             <!-- <script>
                 $(document).ready(function(){
                     $('#cpf').mask('000.000.000-00');
@@ -1382,6 +1425,62 @@ window.onload = function() {
         }, 5000);  // Restore the button text after 5 seconds
     });
 </script> -->
+
+<script>
+    // Function to clear the CPF input field
+    function clearCpfModal() {
+        document.getElementById('cpfForm').reset(); // Reset the form (clears all fields)
+        document.getElementById('cpfErrorMessage').innerText = ''; // Clear any error messages
+    }
+
+    // Function to close the modal and clear the data
+    function closeCpfModal() {
+        $('#cpfModal').modal('hide'); // Close the modal
+        clearCpfModal(); // Clear the modal fields
+    }
+
+    // Event listener for the "Cancelar" button
+    $('#cancelBtn').on('click', function() {
+        closeCpfModal();
+    });
+
+    // Event listener for when the modal is closed using the 'x' button or clicking outside
+    $('#cpfModal').on('hidden.bs.modal', function () {
+        clearCpfModal();
+    });
+
+    document.getElementById('verifyCpfBtn').addEventListener('click', function() {
+        var cpf = document.getElementById('cpfInput').value;
+        var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;  // Fetch CSRF token
+
+        // Send the CPF to the backend for verification
+        fetch('/verificar-cpf/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken  // Include CSRF token
+            },
+            body: new URLSearchParams({
+                'cpf': cpf
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Redirect to the admin login page if CPF is valid and user is superuser
+                closeCpfModal(); // Close and clear modal before redirect
+                window.location.href = data.redirect_url;
+            } else {
+                // Display error message if user is not a superuser or CPF is invalid
+                document.getElementById('cpfErrorMessage').innerText = data.message || 'Erro ao verificar CPF.';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('cpfErrorMessage').innerText = 'Erro na verificação.';
+        });
+    });
+</script>
 
 
 

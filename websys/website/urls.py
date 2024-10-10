@@ -8,7 +8,11 @@ from django.contrib.auth import views as auth_views
 from .views import CustomPasswordResetView ,CustomAdminLoginView # Import your custom view
 from django.shortcuts import redirect
 
-from .views import admin_dashboard_view
+from .views import verify_cpf_ajax
+from .views import verificar_cpf
+
+from .views import admin_login_view
+from .views import admin_dashboard
 
 class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
     def get(self, request, *args, **kwargs):
@@ -24,7 +28,7 @@ urlpatterns = [
     path('verificar_cpf/', views.verificar_cpf_ajax, name='verificar_cpf_ajax'),
     path('verificar-cpf-ajax/', verificar_cpf_ajax, name='verificar_cpf_ajax'),
     path('area-candidato/', area_do_candidato, name='area_do_candidato'),
-    path('logout/', logout_view, name='logout'),  # URL de logout via POST
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('confirmar-logout/', logout_confirm, name='logout_confirm'),  # Página de confirmação de logout
     path('imprimir-inscricao/<int:inscricao_id>/', views.imprimir_inscricao, name='imprimir_inscricao'),
     path('imprimir-inscricao/', views.imprimir_inscricao, name='imprimir_inscricao'),
@@ -52,7 +56,7 @@ urlpatterns = [
     path('accounts/reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('accounts/reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('test-email/', views.test_email),
-    path('admin/dashboard/', admin_dashboard_view, name='admin_dashboard'),
+    path('admin-dashboard/', admin_dashboard, name='admin_dashboard'),
 
     path('accounts/login-admin/', CustomAdminLoginView.as_view(), name='login_admin'),
     path('accounts/login-admin/', CustomAdminLoginView.as_view(), name='admin_login'),  # Add 
@@ -60,5 +64,12 @@ urlpatterns = [
     path('editar-inscricao/<int:id>/', views.editar_inscricao, name='editar_inscricao'),
     path('visualizar-inscricao/<int:id>/', views.visualizar_inscricao, name='visualizar_inscricao'),
     path('acompanhar-inscricao/<int:id>/', views.acompanhar_inscricao, name='acompanhar_inscricao'),
+    path('verify-cpf/', verify_cpf_ajax, name='cpf_verification'),
+    path('verify-cpf/', views.verify_cpf_ajax, name='verify_cpf_ajax'),
+    path('verify-cpf/', verificar_cpf, name='verify_cpf_ajax'),
+    path('verificar-cpf/', views.verify_cpf_ajax, name='verificar_cpf'),
+    path('admin-login/', admin_login_view, name='admin_login'),
+
+    path('inscricoes/', views.listar_inscricoes, name='listar_inscricoes'),
 
 ]
