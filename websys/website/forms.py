@@ -1,7 +1,6 @@
 from django import forms
 from .models import Candidato
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Inscricao
 
 class CandidatoForm(forms.ModelForm):
     class Meta:
@@ -32,9 +31,3 @@ class CPFLoginForm(AuthenticationForm):
             'placeholder': 'Digite sua senha',
             'class': 'form-control'
         })
-
-
-class InscricaoForm(forms.ModelForm):
-    class Meta:
-        model = Inscricao
-        fields = ['prova_todas_disciplinas_sim', 'prova_todas_disciplinas_nao', 'disciplinas']

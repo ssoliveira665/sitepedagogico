@@ -360,14 +360,14 @@
 
                         <!-- Prova de todas disciplinas -->
                         <div class="col-md-4 mb-3">
-                            <label for="prova_todas_disciplinas_sim">Deseja realizar a prova de todas as disciplinas?</label><br>
+                            <label for="prova_todas_disciplinas" class="form-label">Deseja realizar a prova de todas as disciplinas?</label><br>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" id="prova_todas_disciplinas_sim" name="prova_todas_disciplinas" value="sim" {% if inscricao.prova_todas_disciplinas_sim %}checked{% endif %}>
-                                <label class="form-check-label" for="prova_todas_disciplinas_sim">Sim</label>
+                                <input type="radio" id="prova_todas_disciplinas_sim" name="prova_todas_disciplinas" value="Sim" class="form-check-input" onchange="toggleDisciplinas(false)" required>
+                                <label for="prova_todas_disciplinas_sim" class="form-check-label">Sim</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" id="prova_todas_disciplinas_nao" name="prova_todas_disciplinas" value="nao" {% if inscricao.prova_todas_disciplinas_nao %}checked{% endif %}>
-                                <label class="form-check-label" for="prova_todas_disciplinas_nao">Não</label>
+                                <input type="radio" id="prova_todas_disciplinas_nao" name="prova_todas_disciplinas" value="Não" class="form-check-input" onchange="toggleDisciplinas(true)" required>
+                                <label for="prova_todas_disciplinas_nao" class="form-check-label">Não</label>
                             </div>
                         </div>
 

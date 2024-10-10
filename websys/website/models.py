@@ -111,10 +111,6 @@ class Inscricao(models.Model):
     aprovado = models.BooleanField(default=False)  # Add this field
     cpf_responsavel = models.CharField(max_length=11, null=True, blank=True)  # Novo campo
     rg_responsavel = models.CharField(max_length=12, null=True, blank=True)   # Novo campo
-
-    # Novas colunas para armazenar se a prova de todas as disciplinas foi escolhida
-    prova_todas_disciplinas_sim = models.BooleanField(default=False)
-    prova_todas_disciplinas_nao = models.BooleanField(default=False)
     
 
 
@@ -199,28 +195,6 @@ class Inscricao(models.Model):
         blank=True,
         verbose_name="Qual(is) disciplina(s) deseja realizar a prova"
     )
-
-    def save(self, *args, **kwargs):
-        if self.prova_todas_disciplinas_sim:
-            # Se 'prova_todas_disciplinas_sim' estiver marcada, adiciona todas as disciplinas
-            todas_disciplinas = Disciplina.objects.filter(
-                nome__in=[
-                    'Matemática', 
-                    'Ciências', 
-                    'Arte', 
-                    'Educação Física', 
-                    'História', 
-                    'Geografia', 
-                    'Língua Portuguesa', 
-                    'Inglês'
-                ]
-            )
-            self.disciplinas.set(todas_disciplinas)
-        elif self.prova_todas_disciplinas_nao:
-            # Caso contrário, limpa as disciplinas se "Não" for marcado
-            self.disciplinas.clear()
-        
-        super().save(*args, **kwargs)
     
 
 

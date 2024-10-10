@@ -51,8 +51,6 @@ from django.contrib.auth import views as auth_views
 from django.core.mail import send_mail
 import csv
 
-from .forms import InscricaoForm  # Supondo que você tenha um formulário criado
-
 
 
 def cadastro_candidato(request):
@@ -249,6 +247,7 @@ def format_rg(rg):
     if len(rg) >= 9:  # Ajusta de acordo com a quantidade de dígitos do RG
         return f"{rg[:2]}.{rg[2:5]}.{rg[5:8]}-{rg[8:]}"
     return rg  # Retorna o RG sem modificação se não tiver o tamanho esperado.
+#**********************************************************************************************************
 
 def imprimir_inscricao(request, inscricao_id):
     inscricao = get_object_or_404(Inscricao, id=inscricao_id)
@@ -323,7 +322,7 @@ def imprimir_inscricao(request, inscricao_id):
 
     dados_pessoais = [
         ["Nome Completo:", inscricao.candidato.nome_completo],
-        ["CPF:", format_cpf(inscricao.candidato.cpf)],
+        ["CPF:", inscricao.candidato.cpf],
         ["Email", inscricao.candidato.email],
         ["Telefone", inscricao.telefone],
         ["Telefone Secundário", inscricao.telefone_secundario or 'N/A'],
@@ -346,7 +345,7 @@ def imprimir_inscricao(request, inscricao_id):
 
     tabela_pessoal.wrapOn(pdf, width, height)
     tabela_pessoal.drawOn(pdf, margin, height - section_y_offset - 130)
-    section_y_offset += 170
+    section_y_offset += 160
 
     # --- Tabela de Endereço ---
     pdf.setFont("Helvetica-Bold", 14)
@@ -402,7 +401,7 @@ def imprimir_inscricao(request, inscricao_id):
 
     # tabela_adicional.wrapOn(pdf, width, height)
     # tabela_adicional.drawOn(pdf, margin, height - section_y_offset - 120)
-    section_y_offset += 20
+    section_y_offset += 5
 
     # --- Tabela de Dados do Responsável Legal ---
     pdf.setFont("Helvetica-Bold", 14)
@@ -823,46 +822,3 @@ def visualizar_inscricao(request, id):
 def acompanhar_inscricao(request, id):
     inscricao = get_object_or_404(Inscricao, id=id)
     return render(request, 'acompanhar_inscricao.html', {'inscricao': inscricao})
-#**********************************************************************************************************
-
-def cadastro_inscricao(request, inscricao_id=None):
-    if inscricao_id:
-        inscricao = get_object_or_404(Inscricao, id=inscricao_id)
-    else:
-        inscricao = Inscricao()
-
-    if request.method == 'POST':
-        form = InscricaoForm(request.POST, instance=inscricao)
-        if form.is_valid():
-            inscricao = form.save(commit=False)
-            
-            # Processar a escolha de prova de todas as disciplinas
-            prova_todas_disciplinas = request.POST.get('prova_todas_disciplinas')
-            if prova_todas_disciplinas == 'sim':
-                inscricao.prova_todas_disciplinas_sim = True
-                inscricao.prova_todas_disciplinas_nao = False
-                # Adicionar as disciplinas
-                todas_disciplinas = Disciplina.objects.filter(
-                    nome__in=[
-                        'Matemática', 
-                        'Ciências', 
-                        'Arte', 
-                        'Educação Física', 
-                        'História', 
-                        'Geografia', 
-                        'Língua Portuguesa', 
-                        'Inglês'
-                    ]
-                )
-                inscricao.disciplinas.set(todas_disciplinas)
-            elif prova_todas_disciplinas == 'nao':
-                inscricao.prova_todas_disciplinas_sim = False
-                inscricao.prova_todas_disciplinas_nao = True
-                # Nenhuma disciplina será adicionada, ou você pode permitir a seleção manual
-                
-            inscricao.save()
-            return redirect('area_do_candidato')  # Redirecionar para uma página de sucesso após o envio
-    else:
-        form = InscricaoForm(instance=inscricao)
-
-    return render(request, 'cadastro_inscricao.html', {'form': form})
