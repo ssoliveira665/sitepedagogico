@@ -115,14 +115,14 @@
         <form method="POST" action="{% url 'admin_login' %}">
             {% csrf_token %}
             <div class="form-group mb-3">
-                <label for="username">CPF</label>
-                <input type="text" name="username" class="form-control" id="username" placeholder="Enter your CPF" required>
+                <label for="username">E-Mail</label>
+                <input type="text" name="username" class="form-control" id="username" placeholder="Digite o E-Mail" required>
             </div>
 
             <div class="form-group mb-3">
                 <label for="password">Senha</label>
                 <div class="input-group">
-                    <input type="password" name="password" class="form-control" id="password" placeholder="Enter your password" required>
+                    <input type="password" name="password" class="form-control" id="password" placeholder="Digite sua senha" required>
                     <button class="btn btn-outline-secondary" type="button" id="togglePassword">
                         <img src="{% static 'img/eye-icon.png' %}" alt="Show Password" style="width: 20px; height: 20px;">
                     </button>
@@ -131,13 +131,15 @@
 
             <button type="submit" class="btn btn-primary w-100">Login</button>
             <!-- Back button -->
-            <button onclick="window.location.href='/'" class="btn btn-secondary w-100 mt-3">Voltar para Home</button>
+            <button onclick="window.history.back()" class="btn btn-secondary w-100 mt-3">Voltar para Home</button>
+
+
 
 
         </form>
 
         <div class="footer">
-            &copy; 2024 Secretaria Municipal de Educação - Admin Panel
+            &copy; 2024 Secretaria Municipal de Educação - Painel Admin
         </div>
     </div>
 

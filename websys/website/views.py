@@ -56,6 +56,7 @@ from django.contrib.auth import get_user_model
 import json
 from .forms import InscricaoSearchForm
 from .forms import InscricaoFilterForm  # Importe o formulário de filtro
+from .forms import InscricaoForm
 
 
 
@@ -707,20 +708,22 @@ def test_email(request):
     return HttpResponse('Email sent!')
 #**********************************************************************************************************
 
-@user_passes_test(lambda u: u.is_superuser)  # Ensure only superusers can access
+@user_passes_test(lambda u: u.is_superuser)  # Garantir que apenas superusuários acessem
 def admin_dashboard(request):
     usuarios = User.objects.all()  # Obtém todos os usuários
-    inscricoes = Inscricao.objects.all()  # Obtendo todas as inscrições do banco de dados
-    total_inscritos = Inscricao.objects.count()  # Conta o número total de registros
-    registros_aguardando = Inscricao.objects.filter(status='aguardando').count()  # Ajuste para o campo de status
+    inscricoes = Inscricao.objects.filter(ativo=True)  # Somente inscrições ativas
+    total_inscritos = Inscricao.objects.filter(ativo=True).count()  # Conta apenas os registros ativos
+    registros_aguardando = Inscricao.objects.filter(status='aguardando', ativo=True).count()  # Apenas os aguardando que estão ativos
     usuarios_ativos = User.objects.filter(is_active=True).count()  # Contagem de usuários ativos
+    
     context = {
         'usuarios': usuarios,
-        'inscricoes': inscricoes,  # Passando os dados de inscrições para o template
-        'total_inscritos': total_inscritos,
-        'registros_aguardando': registros_aguardando,
+        'inscricoes': inscricoes,  # Passando os dados de inscrições ativas para o template
+        'total_inscritos': total_inscritos,  # Passando o total de inscritos ativos
+        'registros_aguardando': registros_aguardando,  # Somente registros ativos aguardando
         'usuarios_ativos': usuarios_ativos,
     }
+    
     return render(request, 'admin_dashboard.html', context)
 #**********************************************************************************************************
 
@@ -928,3 +931,63 @@ def listar_inscricoes(request):
     }
     
     return render(request, 'inscricoes/listar.html', context)
+#**********************************************************************************************************
+
+def dashboard_view(request):
+    # Contagem de inscritos por local
+    inscritos_por_local = {
+        'CMEJA Jose de Deus Andrade': Inscricao.objects.filter(local_exame="CMEJA Jose de Deus Andrade").count(),
+        'EMEF Sebastião Agripino da Silva': Inscricao.objects.filter(local_exame="EMEF Sebastião Agripino da Silva").count(),
+        'EMEF Maria de Lourdes Rocha Rodrigues': Inscricao.objects.filter(local_exame="EMEF Maria de Lourdes Rocha Rodrigues").count(),
+        'EMEIF Adelaide Molinari': Inscricao.objects.filter(local_exame="EMEIF Adelaide Molinari").count(),
+        'EMEIF Raimundo de Oliveira': Inscricao.objects.filter(local_exame="EMEIF Raimundo de Oliveira").count(),
+        'EMEIF Teotonio Vilela': Inscricao.objects.filter(local_exame="EMEIF Teotonio Vilela").count(),
+        'EMEB Gercino Correa de Melo Junior': Inscricao.objects.filter(local_exame="EMEB Gercino Correa de Melo Junior").count(),
+    }
+
+    # Calcular o total geral de inscritos
+    total_inscritos = sum(inscritos_por_local.values())
+
+    # Pegar todas as inscrições com os dados adicionais necessários
+    inscricoes = Inscricao.objects.all()
+
+    # Passar os dados para o template
+    return render(request, 'dashboard.html', {
+        'inscritos_por_local': inscritos_por_local,
+        'total_inscritos': total_inscritos,
+        'inscricoes': inscricoes,  # Passando todas as inscrições com seus dados
+    })
+#**********************************************************************************************************
+
+def deletar_inscricao(request, id):
+    inscricao = get_object_or_404(Inscricao, id=id)
+    inscricao.delete()
+    return redirect('admin_dashboard')  # Redirecione para o dashboard após deletar
+#**********************************************************************************************************
+def inativar_inscricao(request, id):
+    inscricao = get_object_or_404(Inscricao, id=id)
+    inscricao.ativo = False
+    inscricao.save()
+    return redirect('admin_dashboard')  # Redireciona para a página do dashboard ou outra página
+#**********************************************************************************************************
+def reativar_inscricao(request, id):
+    inscricao = get_object_or_404(Inscricao, id=id)
+    inscricao.ativo = True
+    inscricao.save()
+    return redirect('admin_dashboard')
+#**********************************************************************************************************
+def editar_inscricao(request, id):
+    if request.method == 'POST':
+        inscricao = get_object_or_404(Inscricao, id=id)
+
+        # Recebendo os dados do formulário
+        status = request.POST.get('status')
+        nota_prova = request.POST.get('nota_prova')
+
+        # Atualizar os campos da inscrição
+        inscricao.status = status
+        inscricao.nota_prova = nota_prova
+        inscricao.save()
+
+        # Retornar resposta JSON para o AJAX
+        return JsonResponse({'message': 'Inscrição atualizada com sucesso!'})

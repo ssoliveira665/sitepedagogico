@@ -90,6 +90,12 @@ class Usuario(AbstractUser):
     def __str__(self):
         return self.nome_completo
 #**********************************************************************************************************
+class Disciplina(models.Model):
+    nome = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.nome
+#**********************************************************************************************************
 
 class Inscricao(models.Model):
     candidato = models.OneToOneField(Usuario, on_delete=models.CASCADE, related_name="inscricao")
@@ -111,7 +117,9 @@ class Inscricao(models.Model):
     aprovado = models.BooleanField(default=False)  # Add this field
     cpf_responsavel = models.CharField(max_length=11, null=True, blank=True)  # Novo campo
     rg_responsavel = models.CharField(max_length=12, null=True, blank=True)   # Novo campo
-    
+    disciplinas_aprovadas = models.ManyToManyField(Disciplina, related_name='inscricoes_aprovadas', blank=True)
+    nota_prova = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # Exemplo de campo de nota
+    ativo = models.BooleanField(default=True)  # Define o status como ativo por padrão
 
 
     LOCAL_EXAME_CHOICES = [
@@ -160,16 +168,10 @@ class Inscricao(models.Model):
         verbose_name='Nome da escola onde está matriculado em 2024'
     )
 
-    dia_realizacao_prova = models.DateField(
-        default='2024-12-01',
-        verbose_name='Dia de realização da prova'
-    )
+    dia_realizacao_prova = models.DateField(default='2024-12-01',verbose_name='Dia de realização da prova')
 
     # Field for "Deseja realizar a prova de todas as disciplinas?"
-    PROVA_TODAS_DISCIPLINAS_CHOICES = [
-        ('Sim', 'Sim'),
-        ('Não', 'Não')
-    ]
+    PROVA_TODAS_DISCIPLINAS_CHOICES = [('Sim', 'Sim'),('Não', 'Não')]
 
     prova_todas_disciplinas = models.CharField(
         max_length=3,
@@ -190,18 +192,9 @@ class Inscricao(models.Model):
         ('Inglês', 'Inglês'),
     ]
 
-    disciplinas = models.ManyToManyField(
-        'Disciplina',  # Assuming you have a separate model for disciplines
-        blank=True,
-        verbose_name="Qual(is) disciplina(s) deseja realizar a prova"
-    )
-    
+    disciplinas = models.ManyToManyField(Disciplina, related_name='inscricoes_disciplinas', blank=True)
 
-
-    EXAME_SUPLETIVO_CHOICES = [
-        ('Sim', 'Sim'),
-        ('Não', 'Não')
-    ]
+    EXAME_SUPLETIVO_CHOICES = [('Sim', 'Sim'),('Não', 'Não')]
 
     exame_supletivo = models.CharField(
         max_length=3, 
@@ -210,13 +203,8 @@ class Inscricao(models.Model):
         verbose_name="Já fez a prova do exame supletivo anteriormente, ofertado pelo município de Canaã dos Carajás?"
     )
 
-    
     # New Status Field
-    STATUS_CHOICES = [
-        ('inscrito', 'Inscrito'),
-        ('approved', 'Aprovado'),
-        ('analise', 'Analise'),
-    ]
+    STATUS_CHOICES = [('inscrito', 'Inscrito'),('approved', 'Aprovado'),('analise', 'Analise'),]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Inscrito')
 
     def __str__(self):
@@ -295,11 +283,7 @@ class Bairro(models.Model):
     def __str__(self):
         return f'{self.logradouro_nome} - {self.bairro_distrito}'
 #**********************************************************************************************************
-class Disciplina(models.Model):
-    nome = models.CharField(max_length=50)
 
-    def __str__(self):
-        return self.nome
 #**********************************************************************************************************
 # class Disciplina(models.Model):
 #     nome = models.CharField(max_length=100)

@@ -71,5 +71,9 @@ urlpatterns = [
     path('admin-login/', admin_login_view, name='admin_login'),
 
     path('inscricoes/', views.listar_inscricoes, name='listar_inscricoes'),
+    path('deletar-inscricao/<int:id>/', views.deletar_inscricao, name='deletar_inscricao'),
+    path('editar-inscricao/<int:id>/', views.editar_inscricao, name='editar_inscricao'),
+    path('inativar-inscricao/<int:id>/', views.inativar_inscricao, name='inativar_inscricao'),
+
 
 ]

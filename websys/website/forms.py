@@ -1,6 +1,7 @@
 from django import forms
 from .models import Candidato
 from django.contrib.auth.forms import AuthenticationForm
+from .models import Inscricao
 
 class CandidatoForm(forms.ModelForm):
     class Meta:
@@ -51,3 +52,9 @@ class InscricaoFilterForm(forms.Form):
     )
     data_inicio = forms.DateField(required=False, label="Data de Início", widget=forms.TextInput(attrs={'type': 'date'}))
     data_fim = forms.DateField(required=False, label="Data de Fim", widget=forms.TextInput(attrs={'type': 'date'}))
+
+
+class InscricaoForm(forms.ModelForm):
+    class Meta:
+        model = Inscricao
+        fields = ['disciplinas_aprovadas', 'status', 'nota_prova', 'prova_realizada']  # Liste todos os campos que você deseja no formulário
