@@ -991,3 +991,10 @@ def editar_inscricao(request, id):
 
         # Retornar resposta JSON para o AJAX
         return JsonResponse({'message': 'Inscrição atualizada com sucesso!'})
+#**********************************************************************************************************
+def pagina_atualizacao(request):
+    if settings.SITE_ATUALIZACAO:
+        return render(request, 'atualizacao.html')
+    else:
+        return redirect('home')  # Redireciona para a página principal quando o site não está em atualização
+#**********************************************************************************************************

@@ -74,6 +74,6 @@ urlpatterns = [
     path('deletar-inscricao/<int:id>/', views.deletar_inscricao, name='deletar_inscricao'),
     path('editar-inscricao/<int:id>/', views.editar_inscricao, name='editar_inscricao'),
     path('inativar-inscricao/<int:id>/', views.inativar_inscricao, name='inativar_inscricao'),
-
+    path('atualizacao/', views.pagina_atualizacao, name='pagina_atualizacao'),
 
 ]

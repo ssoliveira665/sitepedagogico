@@ -74,6 +74,18 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',  # Use 'mysql' para o backend
+#         'NAME': 'eja2024',
+#         'USER': 'root',
+#         'PASSWORD': '@Drik16091985',
+#         'HOST': 'localhost',   # Ou o IP do servidor MySQL
+#         'PORT': '3306',        # Porta padrão do MySQL
+#     }
+# }
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -148,10 +160,11 @@ AUTHENTICATION_BACKENDS = [
 
 EMAIL_HOST='smtp.gmail.com'
 EMAIL_PORT=587
-EMAIL_USE_TSL=True
+EMAIL_USE_TLS = True
 EMAIL_HOST_USER='shelton.oliveira.barbosa@gmail.com'
 EMAIL_HOST_PASSWORD='@Drik16091985'
 
 
+SITE_ATUALIZACAO = False
 
 
