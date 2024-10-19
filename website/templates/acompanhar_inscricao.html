@@ -1,0 +1,4 @@
+<h1>Acompanhamento da Inscrição</h1>
+<p><strong>Nome do Candidato:</strong> {{ inscricao.candidato.nome_completo }}</p>
+<p><strong>Status da Inscrição:</strong> {{ inscricao.status }}</p>
+<p><strong>Nota:</strong> {% if inscricao.nota %} {{ inscricao.nota }} {% else %} Aguardando... {% endif %}</p>

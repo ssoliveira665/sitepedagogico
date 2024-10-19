@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Área do Candidato - Exame de Suplência 2024</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: #343a40;
+            padding: 1rem;
+        }
+
+        .navbar-brand img {
+            max-height: 50px;
+        }
+
+        .navbar-nav .nav-link {
+            color: #fff !important;
+            font-weight: 600;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #f47835 !important;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 60px 20px;
+            background-color: #6c757d;
+            color: white;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+        }
+
+        /* Card Style */
+        .card-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 100%;
+            max-width: 30%;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card h3 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .card .btn {
+            background-color: #007bff;
+            border: none;
+        }
+
+        .card .btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Success Banner */
+        #successMessage {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 10px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #343a40;
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Modal */
+        .modal-header {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .modal-header .btn-close {
+            color: white;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .card-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .card {
+                max-width: 90%;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <img src="{% static 'img/logo prefeitura.png' %}" alt="Logo SEMED">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="servicosDropdown" data-bs-toggle="dropdown">
+                        Serviços
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            {% if inscricao %}
+                            <a class="dropdown-item" href="{% url 'imprimir_inscricao' inscricao.id %}" target="_blank">Imprimir Inscrição</a>
+                            {% else %}
+                            <p class="dropdown-item">Nenhuma inscrição disponível.</p>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Eventos</a>
+                </li>
+
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <span class="nav-link"><i class="fas fa-user"></i> {{ user.email }}</span>
+                </li>
+                <li class="nav-item">
+                    <span class="nav-link"><i class="fas fa-id-card"></i> CPF: {{ user.cpf }}</span>
+                </li>
+                <li class="nav-item">
+                    <form method="POST" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link nav-link"><i class="fas fa-sign-out-alt"></i> Sair</button>
+                    </form>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link"><i class="fas fa-sign-in-alt"></i> Login</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+<!-- Header Section -->
+<div class="header">
+    <h1>Área do Candidato: <b>{{ user.nome_completo }}</b></h1>
+    <p>Exame de Conclusão do Ensino Fundamental</p>
+</div>
+
+<!-- Success Banner -->
+<div id="successMessage" class="container text-center mt-5">
+    <div class="alert alert-success" role="alert">
+        <h2>Inscrição realizada com sucesso! ✅</h2>
+        <p>Nº da inscrição: {{ inscricao.id }}</p>
+        <p>O comprovante está disponível no menu de serviços acima.</p>
+    </div>
+</div>
+
+<!-- Content Section -->
+<div class="container mt-5">
+    <div class="card-container">
+        <div class="card">
+            <h3 class="text-primary" >Informações Pessoais</h3>
+            <p><strong>Nome:</strong> {{ user.nome_completo }}</p>
+            <p><strong>CPF:</strong> {{ user.cpf }}</p>
+            <button class="btn btn-outline-light btn-lg mt-3" data-bs-toggle="modal" data-bs-target="#modalInfoPessoal">Ver Detalhes</button>
+        </div>
+
+        <div class="card">
+            <h3 class="text-primary">Inscrição Exame 2024</h3>
+            <p><strong>Data:</strong> {{ inscricao.data_inscricao }}</p>
+            <p><strong>Status:</strong> {{ inscricao.status }}</p>
+            <button class="btn btn-outline-light btn-lg mt-3" data-bs-toggle="modal" data-bs-target="#modalInscricao">Ver Detalhes</button>
+        </div>
+        
+        <div class="card">
+            <h3 class="text-primary">Provas e Resultados</h3>
+            <p><strong>Nota:</strong> {{ inscricao.nota|default_if_none:"Não Divulgada" }}</p>
+            <p><strong>Status:</strong> {{ inscricao.aprovado|yesno:"Aprovado,Aguardando..." }}</p>
+            <button class="btn btn-outline-light btn-lg mt-3" data-bs-toggle="modal" data-bs-target="#modalInscricao">Ver Detalhes</button>
+        </div>
+    </div>
+</div>
+
+<div class="container table-responsive">
+    <table class="table table-striped table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>Nome do Inscrito</th>
+                <th>CPF</th>
+                <th>Data de Nascimento</th>
+                <th>Prova Todas Disciplinas</th> <!-- Nova coluna -->
+                <th>Endereço</th>
+                <th>Telefone</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ user.nome_completo }}</td>
+                <td>{{ inscricao.candidato.cpf }}</td>
+                <td>{{ user.data_nascimento }}</td>
+                <td>{{ inscricao.prova_todas_disciplinas }}</td> <!-- Valor de Sim ou Não -->
+                <td>{{ inscricao.endereco }}</td>
+                <td>{{ inscricao.telefone_secundario }}</td>
+                <td>
+                    <div class="btn-group" role="group" aria-label="Ações">
+                        <!-- Botão de Editar (desabilitado) -->
+                        <!--
+                        <a href="{% url 'editar_inscricao' inscricao.id %}" class="btn btn-primary btn-sm" title="Editar">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        -->
+                
+                        <!-- Botão de Visualizar (desabilitado) -->
+                        <!--
+                        <a href="{% url 'visualizar_inscricao' inscricao.id %}" class="btn btn-info btn-sm" title="Visualizar">
+                            <i class="fas fa-eye"></i> Visualizar
+                        </a>
+                        -->
+                
+                        <!-- Botão de Acompanhar (ativo) -->
+                        <!-- Botão para abrir a modal -->
+                        <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#acompanharModal" title="Acompanhar">
+                            <i class="fas fa-flag"></i> Acompanhar
+                        </button>
+
+                    </div>
+                </td>
+                
+            </tr>
+        </tbody>
+    </table>
+    <hr>
+    <!-- Tabela de Provas
+    <h3 class="mt-5">Provas Escolhidas</h3>
+    <table class="table table-striped table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>Nome da Prova</th>
+                <th>Data</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prova in inscricao.provas %}
+            <tr>
+                <td>{{ prova.nome }}</td>
+                <td>{{ prova.data }}</td>
+                <td>{{ prova.status }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="text-center">Nenhuma prova escolhida.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table> -->
+    
+</div>
+
+
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="d-flex justify-content-between">
+            <div class="text-start">
+                <p class="mb-0">&copy; 2024 Semed Canaã</p>
+            </div>
+            <div class="text-end">
+                <p class="mb-0">&reg; SEPROT - SEMED V.3</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+<!-- Modal for Personal Information -->
+<div class="modal fade" id="modalInfoPessoal" tabindex="-1" aria-labelledby="modalInfoPessoalLabel" aria-hidden="true">
+<div class="modal-dialog modal-xl">
+    <div class="modal-content shadow-lg rounded-3 border-0">
+        <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title" id="modalInfoPessoalLabel">Informações Pessoais Detalhadas de <b>{{ user.nome_completo }}</b></h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <h6 class="fw-bold text-secondary">Dados Pessoais</h6>
+                        <p><i class="fas fa-user text-primary"></i> <strong>Nome Completo:</strong> {{ user.nome_completo }}</p>
+                        <p><i class="fas fa-envelope text-primary"></i> <strong>E-Mail:</strong> {{ user.email }}</p>
+                        <p><i class="fas fa-id-card text-primary"></i> <strong>CPF:</strong> {{ user.cpf }}</p>
+                        <p><i class="fas fa-birthday-cake text-primary"></i> <strong>Data de Nascimento:</strong> {{ user.data_nascimento }}</p>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <h6 class="fw-bold text-secondary">Responsável</h6>
+                        <p><i class="fas fa-user-shield text-primary"></i> <strong>Nome do Responsável Legal:</strong> {{ inscricao.responsavel_legal }}</p>
+                        <p><i class="fas fa-phone text-primary"></i> <strong>Nº de Telefone:</strong> {{ inscricao.telefone }}</p>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <h6 class="fw-bold text-secondary">Detalhes Adicionais</h6>
+                        <p><i class="fas fa-map-marker-alt text-primary"></i> <strong>Endereço:</strong> {{ inscricao.endereco }}</p>
+                        <p><i class="fas fa-wheelchair text-primary"></i> <strong>Necessidade Especial:</strong> {{ inscricao.necessidade_especial|yesno:"Sim,Não" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer bg-light">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            <button type="button" class="btn btn-primary">Salvar Alterações</button>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Modal for Registration Details -->
+<div class="modal fade" id="modalInscricao" tabindex="-1" aria-labelledby="modalInscricaoLabel" aria-hidden="true">
+<div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content shadow-lg border-0" style="border-radius: 15px;">
+        <div class="modal-header" style="background-color: #007bff; color: white;">
+            <h5 class="modal-title" id="modalInscricaoLabel">Detalhes da Inscrição</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Número da Inscrição:</strong> {{ inscricao.id }}</p>
+                        <p><strong>Data da Inscrição:</strong> {{ inscricao.data_inscricao }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Status:</strong> {{ inscricao.status }}</p>
+                        <p><strong>Aprovado:</strong> {{ inscricao.aprovado|yesno:"Sim,Em Análise" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer justify-content-center">
+            <button type="button" class="btn btn-outline-primary btn-lg" data-bs-dismiss="modal">Fechar</button>
+        </div>
+    </div>
+</div>
+</div>
+
+
+<!-- Modal Acompanhar -->
+<!-- Modal Acompanhar -->
+<!-- Modal Acompanhar -->
+<div class="modal fade" id="acompanharModal" tabindex="-1" aria-labelledby="acompanharModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-between align-items-center">
+                <h5 class="modal-title" id="acompanharModalLabel">Acompanhamento da Inscrição</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Informações da inscrição -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <p><strong>Número da Inscrição:</strong> {{ inscricao.id }}</p>
+                        <p><strong>Nome do Candidato:</strong> {{ inscricao.candidato.nome_completo }}</p>
+                        <p><strong>Status:</strong> <span class="badge bg-success">{{ inscricao.status }}</span></p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <p><strong>Data de Inscrição:</strong> {{ inscricao.data_inscricao }}</p>
+                        <p><strong>Local de Prova:</strong> {{ inscricao.local_exame }}</p>
+                        <p><strong>Data da Prova:</strong> {{ inscricao.dia_realizacao_prova }}</p>
+                    </div>
+                </div>
+
+                <!-- Gráfico de acompanhamento responsivo -->
+                <div class="chart-container mt-5" style="position: relative; height: 40vh; width: 100%;">
+                    <h6 class="text-center mb-4">Progresso de Acompanhamento</h6>
+                    <canvas id="acompanhamentoChart"></canvas>
+                </div>
+
+                <!-- Status de Aprovação -->
+                <div class="row mt-4 text-center">
+                    <div class="col-md-12">
+                        <p><strong>Status Final:</strong> 
+                        {% if inscricao.aprovado %}
+                            <span class="badge bg-success">Aprovado</span>
+                        {% else %}
+                            <span class="badge bg-danger">Em Análise</span>
+                        {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js Script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('acompanhamentoChart').getContext('2d');
+    const acompanhamentoChart = new Chart(ctx, {
+        type: 'doughnut', // Tipo de gráfico (pode ser modificado para 'bar', 'line', etc.)
+        data: {
+            labels: ['Etapa 1', 'Etapa 2', 'Etapa 3', 'Etapa 4'],
+            datasets: [{
+                label: 'Progresso da Inscrição',
+                data: [25, 25, 25, 25], // Dados de exemplo para o progresso
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(153, 102, 255, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(153, 102, 255, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true, // Responsividade ativada
+            maintainAspectRatio: false, // Permite ajustar a altura para ser responsiva
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+            },
+            layout: {
+                padding: {
+                    left: 10,
+                    right: 10,
+                    top: 10,
+                    bottom: 10
+                }
+            }
+        }
+    });
+</script>
+
+
+
+
+
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Hide success message after 3 seconds
+setTimeout(function() {
+    var successMessage = document.getElementById('successMessage');
+    if (successMessage) {
+        successMessage.style.display = 'none';
+    }
+}, 3000);
+</script>
+
+</body>
+</html>

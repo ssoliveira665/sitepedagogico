@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="db.sqlite3" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="1"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="7282"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="funcionarios" custom_title="0" dock_id="1" table="4,12:mainfuncionarios"/><dock_state state="000000ff00000000fd00000001000000020000043c000002befc0100000001fb000000160064006f0063006b00420072006f007700730065003101000000000000043c0000011e00ffffff000002b40000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="auth_group" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="29"/><column index="2" value="39"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="funcionarios" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="29"/><column index="2" value="249"/><column index="3" value="62"/><column index="4" value="93"/><column index="5" value="109"/><column index="6" value="234"/><column index="7" value="300"/><column index="8" value="296"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1*">CREATE TABLE IF NOT EXISTS website_funcionario (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome_completo TEXT NOT NULL,
+    rg TEXT,
+    cpf TEXT NOT NULL,
+    telefone TEXT,
+    email TEXT,
+    cargo TEXT,
+    lotacao TEXT
+)</sql><sql name="SQL 2*">INSERT INTO website_funcionario (nome_completo, rg, cpf, telefone, email, cargo, lotacao)
+VALUES ('ANA CARLA DE SOUZA CASTRO SOUZA', '7121068', '03408633231', '(94)992537624', 'anacarla1923@hotmail.com', 'AGENTE DE SERVIÇOS ADMINISTRATIVOS - PCCR/QP', 'EMEF FRANCISCA ROMANA DOS SANTOS');
+
+INSERT INTO website_funcionario (nome_completo, rg, cpf, telefone, email, cargo, lotacao)
+VALUES ('LIDIA MIRIAN RIBEIRO', '4656458', '00090892259', '94-91579084', 'LIDIA@ABAETETUBA.PA.BR', 'AGENTE DE SERVIÇOS DE BIBLIOTECA ESCOLAR - PCCR/QP', 'EMEF MARIA DE LOURDES ROCHA RODRIGUES');
+
+INSERT INTO website_funcionario (nome_completo, rg, cpf, telefone, email, cargo, lotacao)
+VALUES ('SARA SIGNORELLI DE DEUS FREITAS', '4656458', '00090892259', '94-91579084', 'LIDIA@ABAETETUBA.PA.BR', 'AGENTE DE SERVIÇOS DE BIBLIOTECA ESCOLAR - PCCR/QP', 'EMEIF JUSCELINO KUBITSCHEK');
+
+INSERT INTO website_funcionario (nome_completo, rg, cpf, telefone, email, cargo, lotacao)
+VALUES ('ELIANE BARBOSA DA SILVA', '3213065', '73145980297', NULL, 'SARA@ABAETETUBA.PA.BR', 'AUXILIAR DE SERVIÇOS GERAIS', 'EMEF SEBASTIÃO AGRIPINO DA SILVA');
+
+INSERT INTO website_funcionario (nome_completo, rg, cpf, telefone, email, cargo, lotacao)
+VALUES ('WANDA DA SILVA DE OLIVEIRA', '5764713', '94757755287', '(94)992402524', 'elianebarbosa262524@gmail.com', 'SECRETÁRIO(A) ESCOLAR', 'EMEIF CARLOS HENRIQUE');
+
+-- Continue inserindo os dados dessa forma...
+</sql><current_tab id="1"/></tab_sql></sqlb_project>

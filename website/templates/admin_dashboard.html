@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f6f9;
+        }
+
+        /* Navbar & Sidebar Styles */
+        .navbar {
+            background-color: #343a40;
+            padding: 10px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            color: #ff6f00;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .navbar-nav .nav-link {
+            color: #adb5bd;
+            font-size: 1rem;
+            margin-right: 20px;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #fff;
+        }
+
+        /* Sidebar integrated */
+        .sidebar {
+            background-color: #2c2f33;
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 56px;
+            left: 0;
+            padding: 20px 0;
+        }
+
+        .sidebar h4 {
+            color: #ff6f00;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .sidebar .admin-info {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 15px;
+        }
+
+        .sidebar .admin-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .sidebar .admin-info p {
+            color: #fff;
+            margin: 5px 0;
+        }
+
+        .sidebar a {
+            color: #adb5bd;
+            padding: 10px;
+            text-decoration: none;
+            display: block;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background-color: #ff6f00;
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 270px;
+            margin-top: 70px;
+            padding: 20px;
+        }
+
+        /* Filter and Table */
+        .filter-card {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+        }
+
+        .table-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table th,
+        table td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        table th {
+            background-color: #ff6f00;
+            color: white;
+            text-align: center;
+        }
+
+        table td {
+            text-align: center;
+        }
+
+        .modal-body p {
+            font-size: 1rem;
+        }
+
+        .modal-body strong {
+            color: #ff6f00;
+        }
+
+        /* Custom Card Styles */
+        .custom-card {
+            border: none;
+            border-radius: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+        }
+
+        .custom-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .card-text {
+            font-size: 1.2rem;
+            color: #555;
+        }
+
+        .card-text strong {
+            font-size: 1.5rem;
+            color: #ff6f00;
+        }
+
+        /* Chart Container */
+        #inscritosChartContainer {
+            height: 400px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#">Admin Panel</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fas fa-user"></i> Perfil</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fas fa-cogs"></i> Configurações</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#uploadArquivoModal">
+                        <i class="fas fa-file-upload"></i> Arquivos
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <form method="POST" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link nav-link">
+                            <i class="fas fa-sign-out-alt"></i> Sair
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="admin-info">
+            <img src="{% static 'img/admin_background.jpg' %}" alt="Admin Avatar" class="admin-avatar">
+            <p><i class="fas fa-user"></i> {{ user.nome_completo }}</p>
+            <p><i class="fas fa-envelope"></i> {{ user.email }}</p>
+        </div>
+        <a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="#"><i class="fas fa-users"></i> Usuários</a>
+        <a href="#"><i class="fas fa-chart-bar"></i> Estatísticas</a>
+        <a href="#"><i class="fas fa-cogs"></i> Configurações</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1>Painel Administrativo</h1>
+
+        <div class="row mt-5">
+            <!-- Card para o total de inscritos (6 colunas) -->
+            <div class="col-md-6 col-sm-12">
+                <div class="card text-center shadow-lg border-0">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">Total de Inscritos</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text display-4 text-primary"><strong>{{ total_inscritos }}</strong></p>
+                        <hr>
+                        <p class="card-text">Última atualização: <strong>{{ data_atualizacao }}</strong></p>
+                        <p class="card-text">Número de locais: <strong>{{ locais_count }}</strong></p>
+                    </div>
+                    <div class="card-footer bg-light">
+                        <small class="text-muted">Atualizado automaticamente</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico (6 colunas) -->
+            <div class="col-md-6 col-sm-12">
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="card-title mb-0">Distribuição de Inscritos por Local</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="inscritosChart"></canvas>
+                    </div>
+                    <div class="card-footer bg-light">
+                        <small class="text-muted">Visualização dos locais de exame</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<!-- Tabela de Funcionários -->
+<div class="table-container">
+    <h2>Funcionários Registrados</h2>
+    <table id="funcionarios-table" class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome Completo</th>
+                <th>RG</th>
+                <th>CPF</th>
+                <th>Telefone</th>
+                <th>E-mail</th>
+                <th>Cargo</th>
+                <th>Lotação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for funcionario in funcionarios %}
+                <tr>
+                    <td>{{ funcionario.id }}</td>
+                    <td>{{ funcionario.nome_completo }}</td>
+                    <td>{{ funcionario.rg }}</td>
+                    <td>{{ funcionario.cpf }}</td>
+                    <td>{{ funcionario.telefone }}</td>
+                    <td>{{ funcionario.email }}</td>
+                    <td>{{ funcionario.cargo }}</td>
+                    <td>{{ funcionario.lotacao }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+    <!-- Modal de Visualização -->
+    <div class="modal fade" id="inscricaoModal" tabindex="-1" aria-labelledby="inscricaoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="inscricaoModalLabel">Detalhes da Inscrição: <span id="inscricao-nome"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>ID:</strong> <span id="inscricao-id"></span></p>
+                            <p><strong>Nome Completo:</strong> <span id="inscricao-nome"></span></p>
+                            <p><strong>CPF:</strong> <span id="inscricao-cpf"></span></p>
+                            <p><strong>Data de Inscrição:</strong> <span id="inscricao-data"></span></p>
+                            <p><strong>Responsável Legal:</strong> <span id="responsavel-legal"></span></p>
+                            <p><strong>Telefone:</strong> <span id="telefone"></span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Endereço:</strong> <span id="endereco"></span></p>
+                            <p><strong>Cidade:</strong> <span id="cidade"></span></p>
+                            <p><strong>Bairro:</strong> <span id="bairro"></span></p>
+                            <p><strong>Tipo de Necessidade Especial:</strong> <span id="necessidade-especial"></span></p>
+                            <p><strong>Aprovado:</strong> <span id="aprovado"></span></p>
+                            <p><strong>Local do Exame:</strong> <span id="local-exame"></span></p>
+                            <p><strong>Status:</strong> <span id="status"></span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Modal -->
+
+<!-- Modal de Upload de Arquivo -->
+<div class="modal fade" id="uploadArquivoModal" tabindex="-1" aria-labelledby="uploadArquivoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadArquivoModalLabel">Upload de Planilha de Funcionários</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" enctype="multipart/form-data" action="{% url 'upload_arquivo' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="arquivo" class="form-label">Selecione a Planilha (Excel)</label>
+                        <input class="form-control" type="file" id="arquivo" name="arquivo" accept=".xlsx" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+
+
+    <!-- Modal de Confirmação de Exclusão -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel"><span style="color: red;">CONFIRMAÇÃO:</span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Deseja excluir a inscrição de: <strong><span id="delete-inscricao-nome"></span></strong>?</p>
+                    <p>Inscrição ID: <strong style="color: red;" id="delete-inscricao-id"></strong></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Excluir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Modal -->
+
+
+<!-- Modal de Edição -->
+<div class="modal fade" id="editInscricaoModal" tabindex="-1" aria-labelledby="editInscricaoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editInscricaoModalLabel">Editar Resultado: <span id="edit-inscricao-nome"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editInscricaoForm" method="POST" action="">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <input type="hidden" id="edit-inscricao-id" name="inscricao_id">
+                    
+                    <div class="row">
+                        <!-- Campos para editar a nota da prova e status -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="nota-prova" class="form-label">Nota da Prova</label>
+                                <input type="number" class="form-control" id="nota-prova" name="nota_prova" step="0.01" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" id="status" name="status">
+                                    <option value="Aprovado">Aprovado</option>
+                                    <option value="Reprovado">Reprovado</option>
+                                    <option value="Pendente">Pendente</option>
+                                </select>
+                            </div>
+                        </div>
+            
+                        <!-- Campos para editar disciplinas e prova realizada -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="disciplinas">Disciplinas Aprovadas:</label>
+                                <select id="edit-inscricao-disciplinas" name="disciplinas_aprovadas[]" class="form-control" multiple>
+                                    <option value="Matemática">Matemática</option>
+                                    <option value="Ciências">Ciências</option>
+                                    <option value="Arte">Arte</option>
+                                    <option value="Educação Física">Educação Física</option>
+                                    <option value="História">História</option>
+                                    <option value="Geografia">Geografia</option>
+                                    <option value="Língua Portuguesa">Língua Portuguesa</option>
+                                    <option value="Inglês">Inglês</option>
+                                </select>
+                            </div>
+            
+                            <!-- Botões para selecionar ou desmarcar todas as disciplinas -->
+                            <div class="form-group mt-2">
+                                <button type="button" class="btn btn-primary" id="select-all-disciplines">Selecionar Todas</button>
+                                <button type="button" class="btn btn-secondary" id="deselect-all-disciplines">Desmarcar Todas</button>
+                            </div>
+            
+                            <div class="form-check mt-3">
+                                <input class="form-check-input" type="checkbox" id="prova-realizada" name="prova_realizada">
+                                <label class="form-check-label" for="prova-realizada">
+                                    Prova Realizada
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                </div>
+            </form>
+            
+
+
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+    
+
+    <!-- DataTables and Bootstrap Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.flash.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.pdf.min.js"></script>
+
+
+    <script>
+        $(document).ready(function() {
+            // Inicializando DataTables com as opções de paginação, ordenação, busca global, e botões de exportação
+            var table = $('#inscricoes-table').DataTable({
+                "paging": true,
+                "ordering": true,
+                "info": true,
+                "searching": true, // Habilitar a pesquisa global
+                "pageLength": 5,
+                "lengthChange": false,
+                "dom": 'Bfrtip', // Adiciona o layout para os botões
+                "buttons": [
+                {
+                    extend: 'excelHtml5',
+                    text: '<i class="fas fa-file-excel"></i>', // Ícone do Font Awesome para Excel
+                    titleAttr: 'Exportar para Excel',
+                    className: 'btn btn-success btn-export',  // Classe personalizada para o botão
+                    exportOptions: {
+                        columns: ':visible'  // Exporta apenas colunas visíveis
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: '<i class="fas fa-file-pdf"></i>', // Ícone do Font Awesome para PDF
+                    titleAttr: 'Exportar para PDF',
+                    className: 'btn btn-danger btn-export',  // Classe personalizada para o botão
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'csvHtml5',
+                    text: '<i class="fas fa-file-csv"></i>', // Ícone do Font Awesome para CSV
+                    titleAttr: 'Exportar para CSV',
+                    className: 'btn btn-info btn-export',  // Classe personalizada para o botão
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'print',
+                    text: '<i class="fas fa-print"></i>', // Ícone do Font Awesome para Imprimir
+                    titleAttr: 'Imprimir',
+                    className: 'btn btn-warning btn-export',  // Classe personalizada para o botão
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                }
+            ]
+            });
+    
+            // Função de busca personalizada
+            $('#filtros-form input, #filtros-form select').on('input change', function() {
+                table.draw(); // Redesenhar a tabela quando os filtros são aplicados
+            });
+    
+            // Função de filtragem personalizada para DataTables
+            $.fn.dataTable.ext.search.push(
+                function(settings, data, dataIndex) {
+                    var nomeFilter = $('#nome_candidato').val().toLowerCase();
+                    var cpfFilter = $('#cpf').val();
+                    var statusFilter = $('#status').val();
+                    var dataInicio = $('#data_inicio').val();
+                    var dataFim = $('#data_fim').val();
+                    var nome = data[1].toLowerCase();  // Coluna "Nome do Candidato"
+                    var cpf = data[2];  // Coluna "CPF"
+                    var status = data[4];  // Coluna "Status"
+                    var dataInscricao = data[3].split('/').reverse().join('-');  // Coluna "Data de Inscrição"
+    
+                    // Filtrar pela primeira letra do nome
+                    if (nomeFilter && nome.indexOf(nomeFilter) !== 0) { // indexOf verifica se começa com o valor digitado
+                        return false;
+                    }
+    
+                    // Filtrar pela primeira letra do CPF
+                    if (cpfFilter && cpf.indexOf(cpfFilter) !== 0) { // indexOf verifica se começa com o valor digitado
+                        return false;
+                    }
+    
+                    // Filtrar por status
+                    if (statusFilter && status !== statusFilter) {
+                        return false;
+                    }
+    
+                    // Filtrar por data de inscrição
+                    if (dataInicio && dataInscricao < dataInicio) {
+                        return false;
+                    }
+    
+                    if (dataFim && dataInscricao > dataFim) {
+                        return false;
+                    }
+    
+                    return true;
+                }
+            );
+    
+            // Modal para visualizar detalhes da inscrição
+            $('.view-inscricao').on('click', function() {
+                var id = $(this).data('id');
+                var nome = $(this).data('nome');
+                var cpf = $(this).data('cpf');
+                var data = $(this).data('data');
+                var responsavelLegal = $(this).data('responsavel');
+                var telefone = $(this).data('telefone');
+                var endereco = $(this).data('endereco');
+                var cidade = $(this).data('cidade');
+                var bairro = $(this).data('bairro');
+                var necessidadeEspecial = $(this).data('necessidade');
+                var aprovado = $(this).data('aprovado');
+                var localExame = $(this).data('local');
+                var status = $(this).data('status');
+    
+                // Preenchendo os campos da modal
+                $('#inscricao-id').text(id);
+                $('#inscricao-nome').text(nome);
+                $('#inscricao-cpf').text(cpf);
+                $('#inscricao-data').text(data);
+                $('#responsavel-legal').text(responsavelLegal);
+                $('#telefone').text(telefone);
+                $('#endereco').text(endereco);
+                $('#cidade').text(cidade);
+                $('#bairro').text(bairro);
+                $('#necessidade-especial').text(necessidadeEspecial);
+                $('#aprovado').text(aprovado);
+                $('#local-exame').text(localExame);
+                $('#status').text(status);
+            });
+        });
+    </script>
+    
+    
+    
+
+    <!-- Script para gerar o gráfico -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var ctx = document.getElementById('inscritosChart').getContext('2d');
+        var inscritosChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [{% for local in inscritos_por_local.keys %}"{{ local }}",{% endfor %}],
+                datasets: [{
+                    label: 'Inscritos',
+                    data: [{% for total in inscritos_por_local.values %}{{ total }},{% endfor %}],
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    </script>
+
+<script>
+    $(document).ready(function() {
+        var inscricaoIdToDelete;  // Variável para armazenar o ID da inscrição a ser excluída
+
+        // Função para formatar o número da inscrição com zeros à esquerda
+        function formatId(id) {
+            return id.toString().padStart(4, '0');  // Adiciona zeros à esquerda até ter 4 dígitos
+        }
+
+        // Quando clicar no botão "Deletar"
+        $('.delete-inscricao').on('click', function(event) {
+            event.preventDefault();  // Evita o comportamento padrão do link
+
+            inscricaoIdToDelete = $(this).data('id');  // Obtém o ID da inscrição
+            var nomeInscricao = $(this).data('nome');  // Obtém o nome do candidato
+
+            // Exibe o nome do candidato e o ID da inscrição formatado com zeros à esquerda
+            $('#delete-inscricao-nome').text(nomeInscricao);
+            $('#delete-inscricao-id').text(formatId(inscricaoIdToDelete));  // Usa a função de formatação
+
+            // Exibe a modal de confirmação
+            $('#confirmDeleteModal').modal('show');
+        });
+
+        // Quando confirmar a exclusão
+        $('#confirmDeleteBtn').on('click', function() {
+            if (inscricaoIdToDelete) {
+                // Redireciona para a URL de exclusão com o ID da inscrição
+                window.location.href = `/deletar-inscricao/${inscricaoIdToDelete}/`;
+            }
+        });
+    });
+</script>
+
+<script>
+   $(document).ready(function() {
+    // Ao abrir a modal de edição, preencha os campos com os dados do item a ser editado
+    $('.edit-inscricao').on('click', function() {
+        var id = $(this).data('id');
+        var nome = $(this).data('nome');
+        var status = $(this).data('status');
+        var nota = $(this).data('nota');
+
+        $('#edit-inscricao-id').val(id);
+        $('#edit-inscricao-nome').text(nome);
+        $('#edit-inscricao-status').val(status);
+        $('#edit-inscricao-nota').val(nota);
+    });
+
+    // Envio do formulário via AJAX
+    $('#editInscricaoForm').on('submit', function(event) {
+        event.preventDefault();  // Impede o envio normal do formulário
+
+        var inscricaoId = $('#edit-inscricao-id').val();
+        var formData = $(this).serialize();  // Coleta todos os dados do formulário
+
+        $.ajax({
+            url: '/editar-inscricao/' + inscricaoId + '/',
+            method: 'POST',
+            data: formData,
+            success: function(response) {
+                // Fechar a modal após a atualização bem-sucedida
+                $('#editInscricaoModal').modal('hide');
+
+                // Exibir mensagem de sucesso (usando SweetAlert, por exemplo)
+                Swal.fire({
+                    title: 'Sucesso!',
+                    text: 'Inscrição atualizada com sucesso!',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+
+                // Atualizar a tabela ou realizar qualquer outra ação necessária
+            },
+            error: function(xhr, status, error) {
+                Swal.fire({
+                    title: 'Erro!',
+                    text: 'Ocorreu um erro ao atualizar a inscrição.',
+                    icon: 'error',
+                    confirmButtonText: 'Tentar novamente'
+                });
+            }
+        });
+    });
+});
+
+
+
+</script>
+
+<script>
+    $(document).ready(function() {
+    // Selecionar todas as disciplinas
+    $('#select-all-disciplines').click(function() {
+        $('#edit-inscricao-disciplinas option').prop('selected', true);
+    });
+
+    // Desmarcar todas as disciplinas
+    $('#deselect-all-disciplines').click(function() {
+        $('#edit-inscricao-disciplinas option').prop('selected', false);
+    });
+
+    // Carregar disciplinas aprovadas ao abrir a modal
+    $('.edit-inscricao').on('click', function() {
+        var disciplinasAprovadas = $(this).data('disciplinas'); // Assuma que seja uma lista ou string de disciplinas
+
+        // Limpa as opções selecionadas
+        $('#edit-inscricao-disciplinas option').prop('selected', false);
+
+        // Seleciona as disciplinas já aprovadas
+        if (disciplinasAprovadas) {
+            disciplinasAprovadas.forEach(function(disciplina) {
+                $('#edit-inscricao-disciplinas option[value="' + disciplina + '"]').prop('selected', true);
+            });
+        }
+    });
+});
+
+</script>
+
+<script>
+    $(document).ready(function() {
+    // Selecionar todas as disciplinas
+    $('#select-all-disciplines').on('click', function() {
+        $('#edit-inscricao-disciplinas option').prop('selected', true);
+        $('#edit-inscricao-disciplinas').trigger('change');
+    });
+
+    // Desmarcar todas as disciplinas
+    $('#deselect-all-disciplines').on('click', function() {
+        $('#edit-inscricao-disciplinas option').prop('selected', false);
+        $('#edit-inscricao-disciplinas').trigger('change');
+    });
+});
+
+</script>
+
+<script>
+    $(document).ready(function() {
+    var inscricaoIdToInactivate;  // Variável para armazenar o ID da inscrição a ser inativada
+
+    // Quando clicar no botão "Inativar"
+    $('.inativar-inscricao').on('click', function(event) {
+        event.preventDefault();  // Evita o comportamento padrão do link
+
+        inscricaoIdToInactivate = $(this).data('id');  // Obtém o ID da inscrição
+        var nomeInscricao = $(this).data('nome');  // Obtém o nome do candidato
+
+        // Exibe o nome do candidato e o ID da inscrição na modal
+        $('#delete-inscricao-nome').text(nomeInscricao);
+        $('#delete-inscricao-id').text(inscricaoIdToInactivate);
+
+        // Exibe a modal de confirmação
+        $('#confirmDeleteModal').modal('show');
+    });
+
+    // Quando confirmar a inativação
+    $('#confirmDeleteBtn').on('click', function() {
+        if (inscricaoIdToInactivate) {
+            // Faz a chamada AJAX para inativar a inscrição
+            $.ajax({
+                url: `/inativar-inscricao/${inscricaoIdToInactivate}/`,  // URL da view que inativa a inscrição
+                method: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function() {
+                    $('#confirmDeleteModal').modal('hide');
+                    location.reload();  // Recarrega a página para atualizar a tabela
+                },
+                error: function() {
+                    alert('Erro ao inativar inscrição');
+                }
+            });
+        }
+    });
+});
+
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#funcionarios-table').DataTable();
+    });
+</script>
+
+
+</body>
+
+</html>
