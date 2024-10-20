@@ -2,43 +2,78 @@
 html,
 body {
     height: 100%;
-    /* Ensure the body occupies full height */
     margin: 0;
     display: flex;
     flex-direction: column;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f5f7fa;
 }
 
+/* Ajuste para o Hero */
+/* Ajustar o carrossel para ficar logo abaixo do navbar */
 .hero {
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url("/static/img/imagemcanaa.jpg");
-    background-size: cover;
-    background-position: center;
-    padding: 150px 0;
+    height: 450px; /* Altura ajustada do hero */
+    padding: 0; /* Remover padding para encostar no navbar */
+    margin-top: 0; /* Certificar-se de que não há margem entre navbar e carrossel */
+    text-align: center;
+    position: relative;
     color: white;
+}
+
+.carousel-inner {
+    height: 450px; /* Garantir que a altura do carrossel seja consistente */
+}
+
+.carousel-item {
+    height: 100%; /* Assegurar que cada item ocupe 100% da altura */
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 100%; /* Garantir que as imagens preencham 100% da altura */
+    object-fit: cover; /* Mantém a proporção correta sem distorção */
+    background-position: center;
+}
+
+/* Ajustes para o texto nas legendas */
+.carousel-caption {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
+    color: white;
+}
+
+.carousel-caption h5 {
+    font-size: 2rem;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    margin-bottom: 15px;
+}
+
+.carousel-caption p {
+    font-size: 1.25rem;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+    margin-bottom: 20px;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
     text-align: center;
 }
 
-
-.hero h1 {
-    font-size: 3.5rem;
-    font-weight: bold;
+/* Controles do Carrossel */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    padding: 10px;
 }
 
-.hero p {
-    font-size: 1.5rem;
-    margin-bottom: 30px;
-}
 
+/* Estilos de Botões */
 .btn-primary {
     background-color: #f47835;
-    border: none;
-    padding: 15px 40px;
-    font-size: 1.25rem;
-    border-radius: 30px;
-}
-
-.btn-secondary {
-    background-color: #f51b1b;
     border: none;
     padding: 15px 40px;
     font-size: 1.25rem;
@@ -49,9 +84,20 @@ body {
     background-color: #d8682b;
 }
 
+.btn-secondary {
+    background-color: #f51b1b;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.25rem;
+    border-radius: 30px;
+}
+
 /* Navbar */
 .navbar {
     background-color: #343a40;
+    margin-bottom: 0; /* Remover qualquer margem inferior */
+    position: relative;
+    z-index: 1000; /* Certificar-se de que o navbar está acima do carrossel */
 }
 
 .navbar-brand img {
@@ -67,33 +113,91 @@ body {
     color: #f47835 !important;
 }
 
+/* Cartões Modernos */
+.modern-card {
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    box-shadow: 0 10px 20px rgba(236, 103, 14, 0.08);
+    border-radius: 15px;
+    transition: all 0.3s ease-in-out;
+    padding: 30px;
+    margin-bottom: 20px;
+}
+
+.modern-card:hover {
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+    transform: scale(1.03);
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.card-title::after {
+    content: '';
+    display: block;
+    width: 50px;
+    height: 3px;
+    background: #f57105;
+    margin: 10px auto;
+}
+
+.card-text {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.btn-modern {
+    background: #f57105;
+    color: white;
+    padding: 12px 25px;
+    font-size: 1rem;
+    border-radius: 50px;
+    transition: background 0.3s ease;
+    border: none;
+    text-decoration: none;
+}
+
+.btn-modern:hover {
+    background: #f57105;
+    color: #fff;
+    text-decoration: none;
+}
+
+.btn-modern:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Conteúdo principal */
 .main-content {
     flex: 1;
-    /* Faz o conteúdo crescer para preencher o espaço disponível */
     display: flex;
     flex-direction: column;
 }
 
 /* Footer */
 footer {
-    position: absolute;
-    bottom: 0;
+    position: relative; /* Alterado para relative */
     width: 100%;
     background-color: #343a40;
     color: white;
     padding: 10px 0;
     text-align: center;
+    margin-top: auto; /* Garantir que ele seja empurrado para o final */
 }
 
-/* CSS for centralizing table content */
+/* Estilos para centralizar conteúdo da tabela */
 .table th,
 .table td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: center;
-    /* Horizontally centers text */
     vertical-align: middle;
-    /* Vertically centers text */
 }
 
 .table th {
@@ -116,22 +220,7 @@ footer {
     border-collapse: collapse;
 }
 
-.table th,
-.table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-}
-
-.table th {
-    background-color: #f47835;
-    color: white;
-}
-
-.table td {
-    background-color: #f7f7f7;
-}
-
+/* Timer */
 .timer-container {
     text-align: center;
     margin-bottom: 20px;
@@ -161,7 +250,7 @@ footer {
     font-weight: 500;
 }
 
-
+/* Modal */
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -180,6 +269,7 @@ footer {
     flex-shrink: 0;
 }
 
+/* Resultados de busca de bairro */
 #bairro-results {
     border: 1px solid #ddd;
     padding: 10px;
@@ -187,25 +277,19 @@ footer {
     overflow-y: auto;
     background-color: #f9f9f9;
     border-radius: 4px;
-    /* Rounded corners */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    /* Subtle shadow for depth */
 }
 
 #bairro-results div {
     padding: 10px;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
-    /* Smooth hover effect */
 }
 
 #bairro-results div:hover {
     background-color: #f47835;
-    /* Change background on hover */
     color: white;
-    /* Invert text color on hover */
     border-radius: 4px;
-    /* Rounded corners on hover */
 }
 
 input#bairro {
@@ -215,77 +299,30 @@ input#bairro {
     border-radius: 4px;
     width: 100%;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
-    /* Slight inner shadow */
     transition: border-color 0.2s ease-in-out;
-    /* Smooth transition for border */
 }
 
 input#bairro:focus {
     border-color: #f47835;
-    /* Change border color on focus */
     outline: none;
-    /* Remove default outline */
 }
 
-/* Hide all selected choices except the first one */
+/* Select com múltiplas seleções */
 .select2-selection__choice {
     display: none;
-    /* Hide all selected choices */
 }
 
 .select2-selection__choice:first-of-type {
     display: inline-block;
-    /* Only display the first selected item */
 }
 
-/* Ensure proper height and overflow for the select element */
 #disciplinas {
     height: auto;
-    /* Auto-adjust height */
     overflow-y: auto;
-    /* Enable scrolling when options exceed space */
     min-height: 38px;
-    /* Set minimum height for single-line display */
 }
 
-/* Style for select elements with multiple selections */
-#disciplinas[multiple] {
-    height: auto;
-    /* Allow height to adjust automatically */
-}
-
-/* Add some padding for a better user experience */
-.select2-container--default .select2-selection--multiple {
-    padding: 5px;
-    height: auto;
-    min-height: 38px;
-    /* Ensure it's aligned with the single-line select */
-    display: flex;
-    align-items: center;
-}
-
-
-/* Ensure that the select dropdown looks like a single-line dropdown */
-select[multiple] {
-    height: auto;
-    /* Adjust height automatically */
-    min-height: 38px;
-    /* Set minimum height to match standard form elements */
-    overflow: hidden;
-    /* Hide extra options initially */
-    line-height: 1.5;
-    /* Adjust line height */
-}
-
-/* Ensure that the dropdown expands to show options when clicked */
-select[multiple]:focus {
-    height: auto;
-    /* Expand on focus */
-    overflow: auto;
-    /* Show options when the select is focused */
-}
-
-
+/* Spinner de loading */
 .loading-spinner {
     position: relative;
 }
@@ -306,12 +343,50 @@ select[multiple]:focus {
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
-.loading-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.carousel-caption .btn {
+    background-color: #f47835; /* Cor do botão */
+    border: none;
+    padding: 10px 30px;
+    font-size: 1.2rem;
+    border-radius: 30px;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+}
+
+.carousel-caption .btn:hover {
+    background-color: #d8682b; /* Cor de hover */
+}
+
+
+
+#consultaPublicaModal .modal-header {
+    background-color: #f47835;
+    color: white;
+}
+
+#consultaPublicaModal .modal-footer .btn-primary {
+    background-color: #f47835;
+    border: none;
+}
+
+#consultaPublicaModal .modal-footer .btn-primary:hover {
+    background-color: #d8682b;
+}
+
+#consultaPublicaModal label {
+    font-weight: bold;
+}
+
+#consultaPublicaModal .form-control,
+#consultaPublicaModal .form-select {
+    border-radius: 10px;
 }

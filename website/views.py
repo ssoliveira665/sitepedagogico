@@ -63,6 +63,12 @@ from .forms import InscricaoForm
 
 from django.views.decorators.csrf import csrf_exempt
 from .models import Funcionario  # Supondo que tenha um modelo Funcionario
+from .forms import RegimentoCadastroForm
+from .forms import RegimentoForm
+from .models import RegimentoCadastro, Registro  # Certifique-se de que o nome do modelo está correto
+
+
+
 
 
 
@@ -549,13 +555,18 @@ def update_info_pessoal(request):
 #**********************************************************************************************************       
 
 def my_view(request):
-    # Example of success message
-    messages.success(request, 'Your data was saved successfully.')
+    # Exemplo de mensagem de sucesso
+    messages.success(request, 'Seus dados foram salvos com sucesso.')
     
-    # Example of error message
-    messages.error(request, 'There was an error processing your request.')
+    # Exemplo de mensagem de erro
+    messages.error(request, 'Houve um erro ao processar sua solicitação.')
 
     return redirect('some_view')
+#**********************************************************************************************************
+
+def some_view(request):
+    return render(request, 'some_template.html')
+
 #**********************************************************************************************************
 
 def update_inscricao(request):
@@ -887,7 +898,7 @@ def admin_login_view(request):
             if user.is_superuser:
                 login(request, user)
                 # Redirect to the admin dashboard if the user is a superuser
-                return redirect('listar_funcionarios')
+                return redirect('regimento_list')
             else:
                 messages.error(request, 'CPF válido, mas você não é um administrador.')
         else:
@@ -1060,12 +1071,16 @@ def admin_login(request):
 
         if user is not None:
             login(request, user)
-            return redirect('listar_funcionarios')  # Redireciona para listar_funcionarios após login
+            return redirect('listar_registros')  # Alterado para redirecionar à lista de regimentos
         else:
             messages.error(request, "E-mail ou senha incorretos.")
     
     return render(request, 'admin_login.html')
 #**********************************************************************************************************
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import RegimentoCadastro
 
 def consulta_publica(request):
     if request.method == 'POST':
@@ -1080,7 +1095,9 @@ def consulta_publica(request):
         cargo = request.POST.get('cargo')
         lotacao = request.POST.get('lotacao')
         observacoes_adicionais = request.POST.get('observacoes_adicionais')
-        data_submissao = request.POST.get('data_submissao')
+
+        # Debugging: Verificar se todos os dados estão sendo capturados
+        #print(f"Recebido: {titulo}, {capitulo}, {tipo_alteracao}, {justificativa}, {nome_completo}, {email}, {cpf}, {telefone}, {cargo}, {lotacao}, {observacoes_adicionais}")
 
         # Criar o objeto RegimentoCadastro e salvar no banco de dados
         regimento_cadastro = RegimentoCadastro(
@@ -1094,17 +1111,112 @@ def consulta_publica(request):
             telefone=telefone,
             cargo=cargo,
             lotacao=lotacao,
-            observacoes_adicionais=observacoes_adicionais,
-            data_submissao=data_submissao
+            observacoes_adicionais=observacoes_adicionais
         )
         regimento_cadastro.save()
 
         # Exibe uma mensagem de sucesso e redireciona para a página de sucesso
         messages.success(request, 'Sua sugestão foi enviada com sucesso!')
-        return redirect('consulta_publica_sucesso')  # Defina esta URL para uma página de sucesso
+        return redirect('consulta_publica_sucesso')
 
     return render(request, 'consulta_publica.html')
+
+
 #**********************************************************************************************************
 def consulta_publica_sucesso(request):
-    return render(request, 'consulta_publica_sucesso.html')
+    return render(request, 'home.html')
 #**********************************************************************************************************
+def consulta_publica_view(request):
+    if request.method == "POST":
+        form = RegimentoCadastroForm(request.POST)
+        if form.is_valid():
+            form.save()  # This should save the form data to the database
+            return HttpResponse("Form successfully saved.")
+        else:
+            print(form.errors)  # This will print form validation errors to the console
+            return HttpResponse("Form data is invalid.")
+    else:
+        form = RegimentoCadastroForm()
+    return render(request, "consulta_publica.html", {"form": form})
+#**********************************************************************************************************
+
+def regimento_cadastro_view(request):
+    if request.method == 'POST':
+        form = RegimentoCadastroForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('home')  # Redireciona após o sucesso
+    else:
+        form = RegimentoCadastroForm()
+
+    return render(request, 'cadastro.html', {'form': form})
+#**********************************************************************************************************
+
+def cadastro_regimento(request):
+    if request.method == 'POST':
+        form = RegimentoForm(request.POST)
+        if form.is_valid():
+            form.save()  # Salva o formulário no banco de dados
+            # Redireciona ou exibe uma mensagem de sucesso
+    else:
+        form = RegimentoForm()
+    
+    return render(request, 'home.html', {'form': form})
+#**********************************************************************************************************
+
+def regimento_form_view(request, pk):
+    regimento = get_object_or_404(RegimentoCadastro, pk=pk)
+    
+    if request.method == 'POST':
+        form = RegimentoCadastroForm(request.POST, instance=regimento)
+        if form.is_valid():
+            form.save()
+            # Redirecionar após salvar
+    else:
+        form = RegimentoCadastroForm(instance=regimento)
+    
+    return render(request, 'seu_template.html', {'form': form})
+#**********************************************************************************************************
+
+def regimento_list_view(request):
+    registros = RegimentoCadastro.objects.all()  # Traz todos os registros de RegimentoCadastro
+    return render(request, 'regimento_list.html', {'registros': registros})
+#**********************************************************************************************************
+
+def cadastrar_regimento(request):
+    if request.method == "POST":
+        form = RegimentoCadastroForm(request.POST)
+        if form.is_valid():
+            # Salvar na tabela 'regimentocadastro'
+            regimentocadastro = form.save()
+
+            # Salvar os mesmos dados na tabela 'registro'
+            Registro.objects.create(
+                titulo=regimentocadastro.titulo,
+                capitulo=regimentocadastro.capitulo,
+                tipo_alteracao=regimentocadastro.tipo_alteracao,
+                justificativa=regimentocadastro.justificativa,
+                nome_completo=regimentocadastro.nome_completo,
+                email=regimentocadastro.email,
+                cpf=regimentocadastro.cpf,
+                telefone=regimentocadastro.telefone,
+                cargo=regimentocadastro.cargo,
+                lotacao=regimentocadastro.lotacao,
+                observacoes_adicionais=regimentocadastro.observacoes_adicionais,
+                data_submissao=regimentocadastro.data_submissao,
+            )
+            return redirect('sucesso')  # Redireciona após o sucesso
+    else:
+        form = RegimentoCadastroForm()
+    
+    return render(request, 'cadastro_regimento.html', {'form': form})
+#**********************************************************************************************************
+def listar_registros(request):
+    # Buscar todos os registros da tabela RegimentoCadastro
+    registros = RegimentoCadastro.objects.all()
+    # Passar os registros para o template
+    return render(request, 'regimento_list.html', {'registros': registros})
+
+def lista_regimentos(request):
+    registros = RegimentoCadastro.objects.all()  # Pega todos os registros da tabela
+    return render(request, 'seu_template.html', {'registros': registros})

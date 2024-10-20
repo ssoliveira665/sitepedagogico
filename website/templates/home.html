@@ -150,16 +150,6 @@
             color: #002f6c;
         }
 
-        .btn-primary {
-            background-color: #f47835;
-            border: none;
-            padding: 10px 20px;
-        }
-
-        .btn-primary:hover {
-            background-color: #d8682b;
-        }
-
         @media (max-width: 768px) {
     .carousel-caption button {
         font-size: 1rem; /* Botão menor em telas pequenas */
@@ -188,7 +178,7 @@
         <div class="container">
             <!-- Logo -->
             <a class="navbar-brand" href="#">
-                <img src="{% static 'img/semed branca.png' %}" alt="Logo SEMED">
+                <img src="{% static 'img/semed_branca.png' %}" alt="Logo SEMED">
             </a>
 
 
@@ -467,11 +457,12 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="consultaPublicaForm">
+                    <form id="consultaPublicaForm" method="POST" action="{% url 'consulta_publica' %}">
+                        {% csrf_token %}
                         <!-- Campo para escolher o Título -->
                         <div class="mb-3">
                             <label for="titulo" class="form-label">Escolha o TÍTULO:</label>
-                            <select class="form-select" id="titulo" required>
+                            <select class="form-select" id="titulo" name="titulo" required>
                                 <option value="" disabled selected>Selecione o TÍTULO</option>
                                 <option value="inserir-titulo">INSERIR TÍTULO</option>
                                 <option value="TÍTULO I">TÍTULO I - DAS DISPOSIÇÕES PRELIMINARES</option>
@@ -488,18 +479,20 @@
                             </select>
                         </div>
 
+
                         <!-- Campo para escolher o Capítulo -->
                         <div class="mb-3">
                             <label for="capitulo" class="form-label">Escolha o CAPÍTULO:</label>
-                            <select class="form-select" id="capitulo" required>
+                            <select class="form-select" id="capitulo" name="capitulo" required>
                                 <option value="" disabled selected>Selecione o CAPÍTULO</option>
                             </select>
                         </div>
 
+
                         <!-- Outros campos já existentes -->
                         <div class="mb-3">
                             <label for="tipoAlteracao" class="form-label">Escolha o tipo de alteração:</label>
-                            <select class="form-select" id="tipoAlteracao" required>
+                            <select class="form-select" id="tipo_alteracao" name="tipo_alteracao" required>
                                 <option value="" disabled selected>Selecione uma opção</option>
                                 <option value="supressao">Supressão</option>
                                 <option value="insercao">Inserção</option>
@@ -508,41 +501,42 @@
                             </select>
                         </div>
 
+
                         <div class="mb-3">
                             <label for="justificativa" class="form-label">Justificativa:</label>
-                            <textarea class="form-control" id="justificativa" rows="4"
+                            <textarea class="form-control" id="justificativa" name="justificativa" rows="4"
                                 placeholder="Explique por que você está sugerindo essa alteração..."
                                 required></textarea>
                         </div>
+
 
                         <!-- Dados Pessoais -->
                         <h6>Dados Pessoais</h6>
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="nomeCompleto" class="form-label">Nome Completo:</label>
-                                <input type="text" class="form-control" id="nomeCompleto"
-                                    placeholder="Digite seu nome completo">
+                                <input type="text" class="form-control" id="nome_completo" name="nome_completo" placeholder="Digite seu nome completo">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="email" class="form-label">E-mail:</label>
-                                <input type="email" class="form-control" id="email" placeholder="Digite seu e-mail">
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Digite seu e-mail">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="cpf" class="form-label">CPF:</label>
-                                <input type="text" class="form-control" id="cpf" placeholder="Digite seu CPF" required>
+                                <input type="text" class="form-control" id="cpf" name="cpf" placeholder="Digite seu CPF" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="telefone" class="form-label">Telefone:</label>
-                                <input type="text" class="form-control" id="telefone" placeholder="Digite seu telefone">
+                                <input type="text" class="form-control" id="telefone" name="telefone" placeholder="Digite seu telefone">
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="cargo" class="form-label">Cargo:</label>
-                                <select class="form-select" id="cargo" required>
+                                <select class="form-select" id="cargo" name="cargo" required>
                                     <option value="" disabled selected>Selecione o Cargo</option>
                                     <option value="ALUNO">ALUNO</option>
                                     <option value="ADMINISTRADOR - PCCR/QP">ADMINISTRADOR - PCCR/QP</option>
@@ -614,10 +608,12 @@
                                     <option value="VICE DIRETOR(A) DE ESCOLA - PCCR/QC">VICE DIRETOR(A) DE ESCOLA - PCCR/QC</option>
                                 </select>
                             </div>
+
+
                             
                             <div class="col-md-6 mb-3">
                                 <label for="lotacao" class="form-label">Lotação:</label>
-                                <select class="form-select" id="lotacao" required>
+                                <select class="form-select" id="lotacao" name="lotacao" required>
                                     <option value="" disabled selected>Selecione a Lotação</option>
                                     <option value="CENTRO DE FORMACAO RUTE SAMPAIO DA CUNHA">CENTRO DE FORMACAO RUTE SAMPAIO DA CUNHA</option>
                                     <option value="CMEJA JOSÉ DE DEUS ANDRADE">CMEJA JOSÉ DE DEUS ANDRADE</option>
@@ -648,12 +644,13 @@
                                     <option value="OUTRO">OUTRO</option>
                                 </select>
                             </div>
-                            
                         </div>
+
+
 
                         <div class="mb-3">
                             <label for="observacoes" class="form-label">Observações Adicionais:</label>
-                            <textarea class="form-control" id="observacoes" rows="3"
+                            <textarea class="form-control" id="observacoes_adicionais" name="observacoes_adicionais"  rows="3"
                                 placeholder="Se houver mais detalhes, adicione aqui..."></textarea>
                         </div>
 
@@ -702,12 +699,15 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!--Mascara cpf-->
     <script>
         $(document).ready(function () {
             $('#cpf').mask('000.000.000-00');
             $('#telefone').mask('(00) 00000-0000');
         });
     </script>
+    <!--fim do js-->
 
     <!-- <script>
     $(document).ready(function() {
@@ -762,6 +762,16 @@
     });
 </script> -->
 
+        <script>
+            document.getElementById('consultaPublicaForm').addEventListener('submit', function(event) {
+            document.getElementById('nome_completo').disabled = false;
+            document.getElementById('email').disabled = false;
+            document.getElementById('telefone').disabled = false;
+            document.getElementById('cargo').disabled = false;
+            document.getElementById('lotacao').disabled = false;
+        });
+
+        </script>
 
 
 
@@ -869,6 +879,7 @@
 
         };
 
+       
         // Referências aos campos de seleção
         const tituloSelect = document.getElementById('titulo');
         const capituloSelect = document.getElementById('capitulo');
@@ -889,34 +900,43 @@
                     capituloSelect.appendChild(option);
                 });
             }
+        
         });
+    
     </script>
+    <!--fim do js-->
 
     <!-- JavaScript para controlar o comportamento dos campos -->
     <script>
         document.getElementById('titulo').addEventListener('change', function () {
-            // Obter o valor selecionado do select 'titulo'
-            var selectedTitulo = this.value;
+    // Obter o valor selecionado do select 'titulo'
+    var selectedTitulo = this.value;
 
-            // Seletores dos elementos a serem modificados
-            var capituloSelect = document.getElementById('capitulo');
-            var tipoAlteracaoSelect = document.getElementById('tipoAlteracao');
+    // Seletores dos elementos a serem modificados
+    var capituloSelect = document.getElementById('capitulo');
+    var tipoAlteracaoSelect = document.getElementById('tipo_alteracao');
 
-            // Se o título selecionado for "INSERIR TÍTULO"
-            if (selectedTitulo === 'inserir-titulo') {
-                // Desabilitar o select de capítulos
-                capituloSelect.disabled = true;
+    // Verifique se os elementos existem antes de tentar acessá-los
+    if (capituloSelect && tipoAlteracaoSelect) {
+        // Se o título selecionado for "INSERIR TÍTULO"
+        if (selectedTitulo === 'inserir-titulo') {
+            // Desabilitar o select de capítulos
+            capituloSelect.disabled = true;
 
-                // Selecionar "Inserção" no select de tipo de alteração e desabilitar
-                tipoAlteracaoSelect.value = 'insercao';
-                tipoAlteracaoSelect.disabled = true;
-            } else {
-                // Caso contrário, habilitar os selects
-                capituloSelect.disabled = false;
-                tipoAlteracaoSelect.disabled = false;
-                tipoAlteracaoSelect.value = '';  // Resetar a seleção de tipo de alteração
-            }
-        });
+            // Selecionar "Inserção" no select de tipo de alteração e desabilitar
+            tipoAlteracaoSelect.value = 'insercao';
+            tipoAlteracaoSelect.disabled = true;
+        } else {
+            // Caso contrário, habilitar os selects
+            capituloSelect.disabled = false;
+            tipoAlteracaoSelect.disabled = false;
+            tipoAlteracaoSelect.value = '';  // Resetar a seleção de tipo de alteração
+        }
+    } else {
+        console.error('One of the elements (capitulo or tipo_alteracao) is missing.');
+    }
+});
+
     </script>
 
 
@@ -974,37 +994,16 @@
         });
     </script>
 
-    <script>
-        $(document).ready(function () {
-            // Evento disparado quando a modal é fechada
-            $('#consultaPublicaModal').on('hidden.bs.modal', function () {
-                location.reload(); // Atualiza a página para limpar os dados
+<script>
+    $(document).ready(function () {
+        ['#consultaPublicaModal', '#consultaPublicaModal1', '#consultaPublicaModal2'].forEach(function(modalId) {
+            $(modalId).on('hidden.bs.modal', function () {
+                location.reload();
             });
         });
-    </script>
-<!-- Fim dos dois elementos -->
-
-
-<!-- controla o comportamento de visualização da modal1 -->
-<script>
-    $(document).ready(function () {
-        // Evento disparado quando a modal é fechada
-        $('#consultaPublicaModal1').on('hidden.bs.modal', function () {
-            // Limpa todos os campos dentro da modal
-            $('#dadosModal').find('input, textarea').val('');
-        });
     });
 </script>
 
-<script>
-    $(document).ready(function () {
-        // Evento disparado quando a modal é fechada
-        $('#consultaPublicaModal1').on('hidden.bs.modal', function () {
-            location.reload(); // Atualiza a página para limpar os dados
-        });
-    });
-</script>
-<!-- Fim dos dois elementos -->
 
 
 <!-- controla o comportamento de visualização da modal2 -->
@@ -1030,8 +1029,6 @@
 
 
 
-    <!-- Scripts necessários -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

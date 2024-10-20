@@ -2,6 +2,8 @@ from django import forms
 from .models import Candidato
 from django.contrib.auth.forms import AuthenticationForm
 from .models import Inscricao
+from .models import RegimentoCadastro
+from .models import Regimento
 
 class CandidatoForm(forms.ModelForm):
     class Meta:
@@ -52,9 +54,23 @@ class InscricaoFilterForm(forms.Form):
     )
     data_inicio = forms.DateField(required=False, label="Data de Início", widget=forms.TextInput(attrs={'type': 'date'}))
     data_fim = forms.DateField(required=False, label="Data de Fim", widget=forms.TextInput(attrs={'type': 'date'}))
+#**********************************************************************************************************
 
 
 class InscricaoForm(forms.ModelForm):
     class Meta:
         model = Inscricao
         fields = ['disciplinas_aprovadas', 'status', 'nota_prova', 'prova_realizada']  # Liste todos os campos que você deseja no formulário
+#**********************************************************************************************************
+
+class RegimentoCadastroForm(forms.ModelForm):
+    class Meta:
+        model = RegimentoCadastro
+        fields = ['titulo', 'capitulo', 'tipo_alteracao', 'justificativa', 'nome_completo', 'email', 'cpf', 'telefone', 'cargo', 'lotacao', 'observacoes_adicionais']
+#**********************************************************************************************************
+
+class RegimentoForm(forms.ModelForm):
+    class Meta:
+        model = Regimento
+        fields = ['titulo', 'capitulo', 'tipo_alteracao', 'justificativa', 'nome_completo', 'cpf', 'email', 'telefone', 'cargo', 'lotacao', 'observacoes_adicionais']
+#**********************************************************************************************************
