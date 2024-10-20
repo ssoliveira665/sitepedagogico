@@ -95,6 +95,20 @@
             padding: 20px;
         }
 
+        /* Card Styles */
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card h5 {
+            color: #ff6f00;
+        }
+
+        /* Table styles */
         .table-container {
             background-color: #fff;
             padding: 20px;
@@ -160,7 +174,88 @@
     <!-- Main Content -->
     <div class="main-content">
         <h2>Lista de Regimentos Cadastrados</h2>
+
+
+
+        <!-- Cards Section -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card">
+                    <h5>Total de Regimentos</h5>
+                    <p>{{ registros.count }} regimentos cadastrados</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <h5>Último Cadastro</h5>
+                    <p>{{ ultimo_registro.titulo }}</p>
+                    <small>{{ ultimo_registro.data_submissao }}</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <h5>Cadastros Pendentes</h5>
+                    <p>{{ total_pendentes }} pendentes</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Área de Filtragem -->
+    <div class="card mb-3 p-3">
+        <h5>Filtros</h5>
+        <form method="GET" action="">
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="tipo_alteracao">Tipo de Alteração</label>
+                    <select class="form-select" id="tipo_alteracao" name="tipo_alteracao">
+                        <option value="" {% if not tipo_alteracao %}selected{% endif %}>Todos</option>
+                        <option value="supressao" {% if tipo_alteracao == 'supressao' %}selected{% endif %}>Supressão</option>
+                        <option value="insercao" {% if tipo_alteracao == 'insercao' %}selected{% endif %}>Inserção</option>
+                        <option value="edicao" {% if tipo_alteracao == 'edicao' %}selected{% endif %}>Alteração</option>
+                        <option value="exclusao" {% if tipo_alteracao == 'exclusao' %}selected{% endif %}>Exclusão</option>
+                    </select>
+                    
+                    
+                </div>
+                <div class="col-md-3">
+                    <label for="nome_completo">Nome Completo</label>
+                    <input type="text" id="nome_completo" name="nome_completo" class="form-control" value="{{ nome_completo }}" placeholder="Ex.: João Silva">
+                </div>
+                <div class="col-md-3">
+                    <label for="lotacao">Lotação</label>
+                    <input type="text" id="lotacao" name="lotacao" class="form-control" value="{{ lotacao }}" placeholder="Ex.: Secretaria A">
+                </div>
+                <div class="col-md-3 align-self-end">
+                    <button type="submit" class="btn btn-primary w-100">Aplicar Filtros</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    
+
+    <div class="icon-group" style="display: flex; gap: 20px; align-items: center; margin-top: 10px;">
+        <a href="{% url 'exportar_csv' %}?tipo_alteracao={{ request.GET.tipo_alteracao }}" class="text-success" title="Exportar CSV" style="text-decoration: none;">
+            <i class="fas fa-file-csv fa-3x"></i>
+        </a>
+        <a href="{% url 'exportar_excel' %}?tipo_alteracao={{ request.GET.tipo_alteracao }}" class="text-info" title="Exportar Excel" style="text-decoration: none;">
+            <i class="fas fa-file-excel fa-3x"></i>
+        </a>
+        <a href="{% url 'exportar_pdf' %}?tipo_alteracao={{ request.GET.tipo_alteracao }}" class="text-danger" title="Exportar PDF" style="text-decoration: none;">
+            <i class="fas fa-file-pdf fa-3x"></i>
+        </a>
+    </div>
+    
+    
+    
+    
+    
+    
+        
+
+        <!-- Table Section -->
         <div class="table-container">
+            <h5>Lista de Regimentos Cadastrados</h5>
             <table class="table table-striped">
                 <thead>
                     <tr>

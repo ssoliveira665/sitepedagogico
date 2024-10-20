@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Regimentos</title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h2>Relatório de Regimentos Cadastrados</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Título</th>
+                <th>Capítulo</th>
+                <th>Tipo de Alteração</th>
+                <th>Nome Completo</th>
+                <th>Email</th>
+                <th>CPF</th>
+                <th>Telefone</th>
+                <th>Cargo</th>
+                <th>Lotação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reg in registros %}
+            <tr>
+                <td>{{ reg.id }}</td>
+                <td>{{ reg.titulo }}</td>
+                <td>{{ reg.capitulo }}</td>
+                <td>{{ reg.tipo_alteracao }}</td>
+                <td>{{ reg.nome_completo }}</td>
+                <td>{{ reg.email }}</td>
+                <td>{{ reg.cpf }}</td>
+                <td>{{ reg.telefone }}</td>
+                <td>{{ reg.cargo }}</td>
+                <td>{{ reg.lotacao }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -180,6 +180,10 @@ urlpatterns = [
 
     # Alguma outra view específica
     path('some-path/', views.some_view, name='some_view'),
+
+    path('exportar/csv/', views.exportar_csv, name='exportar_csv'),
+    path('exportar/excel/', views.exportar_excel, name='exportar_excel'),
+    path('exportar/pdf/', views.exportar_pdf, name='exportar_pdf'),
 ]
 
 

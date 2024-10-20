@@ -1,3 +1,5 @@
+from xhtml2pdf import pisa
+
 import os
 import pandas as pd
 from django.conf import settings
@@ -66,6 +68,13 @@ from .models import Funcionario  # Supondo que tenha um modelo Funcionario
 from .forms import RegimentoCadastroForm
 from .forms import RegimentoForm
 from .models import RegimentoCadastro, Registro  # Certifique-se de que o nome do modelo está correto
+
+from openpyxl import Workbook
+
+import openpyxl
+
+
+
 
 
 
@@ -1179,8 +1188,36 @@ def regimento_form_view(request, pk):
 #**********************************************************************************************************
 
 def regimento_list_view(request):
-    registros = RegimentoCadastro.objects.all()  # Traz todos os registros de RegimentoCadastro
-    return render(request, 'regimento_list.html', {'registros': registros})
+    registros = RegimentoCadastro.objects.all()  # Pegando todos os registros inicialmente
+    # Obtendo os valores dos filtros
+    tipo_alteracao = request.GET.get('tipo_alteracao', '')
+    nome_completo = request.GET.get('nome_completo', '')
+    lotacao = request.GET.get('lotacao', '')
+
+    # Aplicando os filtros
+    registros = RegimentoCadastro.objects.all()
+
+    if tipo_alteracao:
+        registros = registros.filter(tipo_alteracao__icontains=tipo_alteracao)
+    if nome_completo:
+        registros = registros.filter(nome_completo__icontains=nome_completo)
+    if lotacao:
+        registros = registros.filter(lotacao__icontains=lotacao)
+
+    # Obter a contagem total de pendentes e o último registro
+    total_pendentes = RegimentoCadastro.objects.filter(status='pendente').count() if hasattr(RegimentoCadastro, 'status') else None
+    ultimo_registro = RegimentoCadastro.objects.last()  # Último registro
+
+    context = {
+        'registros': registros,
+        'total_pendentes': total_pendentes,
+        'ultimo_registro': ultimo_registro,
+        'tipo_alteracao': tipo_alteracao,
+        'nome_completo': nome_completo,
+        'lotacao': lotacao
+    }
+
+    return render(request, 'regimento_list.html', context)
 #**********************************************************************************************************
 
 def cadastrar_regimento(request):
@@ -1216,7 +1253,76 @@ def listar_registros(request):
     registros = RegimentoCadastro.objects.all()
     # Passar os registros para o template
     return render(request, 'regimento_list.html', {'registros': registros})
+#**********************************************************************************************************
 
 def lista_regimentos(request):
     registros = RegimentoCadastro.objects.all()  # Pega todos os registros da tabela
     return render(request, 'seu_template.html', {'registros': registros})
+#**********************************************************************************************************
+def exportar_csv(request):
+    tipo_alteracao = request.GET.get('tipo_alteracao')  # Obter o filtro da URL
+
+    registros = RegimentoCadastro.objects.all()
+    
+    if tipo_alteracao:
+        registros = registros.filter(tipo_alteracao=tipo_alteracao)
+    
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="registros.csv"'
+    
+    writer = csv.writer(response)
+    writer.writerow(['ID', 'Título', 'Capítulo', 'Tipo de Alteração', 'Justificativa', 'Nome Completo', 'Email', 'CPF', 'Telefone', 'Cargo', 'Lotação'])
+
+    for reg in registros:
+        writer.writerow([reg.id, reg.titulo, reg.capitulo, reg.tipo_alteracao, reg.justificativa, reg.nome_completo, reg.email, reg.cpf, reg.telefone, reg.cargo, reg.lotacao])
+
+    return response
+#**********************************************************************************************************
+def exportar_excel(request):
+    tipo_alteracao = request.GET.get('tipo_alteracao')  # Obter o filtro da URL
+
+    registros = RegimentoCadastro.objects.all()
+
+    if tipo_alteracao:
+        registros = registros.filter(tipo_alteracao=tipo_alteracao)
+    
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Registros"
+    
+    # Cabeçalhos
+    ws.append(['ID', 'Título', 'Capítulo', 'Tipo de Alteração', 'Justificativa', 'Nome Completo', 'Email', 'CPF', 'Telefone', 'Cargo', 'Lotação'])
+
+    for reg in registros:
+        ws.append([reg.id, reg.titulo, reg.capitulo, reg.tipo_alteracao, reg.justificativa, reg.nome_completo, reg.email, reg.cpf, reg.telefone, reg.cargo, reg.lotacao])
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="registros.xlsx"'
+    wb.save(response)
+
+    return response
+# ***********************************************************************************
+def exportar_pdf(request):
+    tipo_alteracao = request.GET.get('tipo_alteracao')  # Obter o filtro da URL
+
+    registros = RegimentoCadastro.objects.all()
+
+    if tipo_alteracao:
+        registros = registros.filter(tipo_alteracao=tipo_alteracao)
+
+    template_path = 'registros_pdf_template.html'  # Template para o PDF
+    context = {'registros': registros}
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="registros.pdf"'
+
+    template = get_template(template_path)
+    html = template.render(context)
+
+    pisa_status = pisa.CreatePDF(BytesIO(html.encode('utf-8')), dest=response)
+
+    if pisa_status.err:
+        return HttpResponse('Erro ao gerar o PDF', status=400)
+
+    return response
+# ***********************************************************************************

@@ -370,6 +370,12 @@ class RegimentoCadastro(models.Model):
         ('edicao', 'Alteração'),
         ('exclusao', 'Exclusão'),
     ]
+
+    STATUS_CHOICES = [
+        ('pendente', 'Pendente'),
+        ('aprovado', 'Aprovado'),
+        ('rejeitado', 'Rejeitado'),
+    ]
     
     titulo = models.CharField(max_length=255)
     capitulo = models.CharField(max_length=255)
@@ -383,6 +389,7 @@ class RegimentoCadastro(models.Model):
     lotacao = models.CharField(max_length=255)
     observacoes_adicionais = models.TextField(null=True, blank=True)
     data_submissao = models.DateTimeField(auto_now_add=True)  # Automatic timestamp on creation
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pendente')
 
     def __str__(self):
         return self.titulo
