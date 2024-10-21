@@ -1087,46 +1087,46 @@ def admin_login(request):
     return render(request, 'admin_login.html')
 #**********************************************************************************************************
 
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import RegimentoCadastro
-
 def consulta_publica(request):
     if request.method == 'POST':
-        titulo = request.POST.get('titulo')
-        capitulo = request.POST.get('capitulo')
-        tipo_alteracao = request.POST.get('tipo_alteracao')
-        justificativa = request.POST.get('justificativa')
-        nome_completo = request.POST.get('nome_completo')
-        email = request.POST.get('email')
-        cpf = request.POST.get('cpf')
-        telefone = request.POST.get('telefone')
-        cargo = request.POST.get('cargo')
-        lotacao = request.POST.get('lotacao')
-        observacoes_adicionais = request.POST.get('observacoes_adicionais')
+        try:
+            # Capturar os dados enviados via POST
+            titulo = request.POST.get('titulo')
+            capitulo = request.POST.get('capitulo')
+            tipo_alteracao = request.POST.get('tipo_alteracao')
+            justificativa = request.POST.get('justificativa')
+            nome_completo = request.POST.get('nome_completo')
+            email = request.POST.get('email')
+            cpf = request.POST.get('cpf')
+            telefone = request.POST.get('telefone')
+            cargo = request.POST.get('cargo')
+            lotacao = request.POST.get('lotacao')
+            observacoes_adicionais = request.POST.get('observacoes_adicionais')
 
-        # Debugging: Verificar se todos os dados estão sendo capturados
-        #print(f"Recebido: {titulo}, {capitulo}, {tipo_alteracao}, {justificativa}, {nome_completo}, {email}, {cpf}, {telefone}, {cargo}, {lotacao}, {observacoes_adicionais}")
+            # Criar o objeto RegimentoCadastro e salvar no banco de dados
+            regimento_cadastro = RegimentoCadastro(
+                titulo=titulo,
+                capitulo=capitulo,
+                tipo_alteracao=tipo_alteracao,
+                justificativa=justificativa,
+                nome_completo=nome_completo,
+                email=email,
+                cpf=cpf,
+                telefone=telefone,
+                cargo=cargo,
+                lotacao=lotacao,
+                observacoes_adicionais=observacoes_adicionais
+            )
+            regimento_cadastro.save()
 
-        # Criar o objeto RegimentoCadastro e salvar no banco de dados
-        regimento_cadastro = RegimentoCadastro(
-            titulo=titulo,
-            capitulo=capitulo,
-            tipo_alteracao=tipo_alteracao,
-            justificativa=justificativa,
-            nome_completo=nome_completo,
-            email=email,
-            cpf=cpf,
-            telefone=telefone,
-            cargo=cargo,
-            lotacao=lotacao,
-            observacoes_adicionais=observacoes_adicionais
-        )
-        regimento_cadastro.save()
+            # Exibir mensagem de sucesso e redirecionar
+            messages.success(request, 'Sua sugestão foi enviada com sucesso!')
+            return redirect('consulta_publica_sucesso')
 
-        # Exibe uma mensagem de sucesso e redireciona para a página de sucesso
-        messages.success(request, 'Sua sugestão foi enviada com sucesso!')
-        return redirect('consulta_publica_sucesso')
+        except Exception as e:
+            # Tratar possíveis erros durante o processo de salvamento
+            print(f"Erro ao salvar os dados: {e}")
+            messages.error(request, 'Ocorreu um erro ao enviar sua sugestão. Por favor, tente novamente.')
 
     return render(request, 'consulta_publica.html')
 
