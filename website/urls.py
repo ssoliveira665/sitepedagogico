@@ -127,6 +127,7 @@ urlpatterns = [
     path('', views.home, name='pagina_inicial'),  # This is just an example; ensure it matches
     path('cadastro-eja/', views.eja_cadastro, name='eja_cadastro'),
     path('login/', views.CustomLoginView.as_view(), name='login'),
+    path('', include('website.urls')),
     path('cadastro-usuario/', views.cadastro_usuario, name='cadastro_usuario'),
     path('verificar-cpf/', views.verificar_cpf_ajax, name='verificar_cpf_ajax'),
     path('area-candidato/', views.area_do_candidato, name='area_do_candidato'),
