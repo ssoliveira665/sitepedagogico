@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório de Registros</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            font-size: 12px;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+        h1 {
+            text-align: center;
+            color: #4A4A4A;
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #4A90E2;
+            color: #fff;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Relatório de Registros</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Capítulo</th>
+                    <th>Tipo de Alteração</th>
+                    <th>Justificativa</th>
+                    <th>Nome Completo</th>
+                    <th>Email</th>
+                    <th>CPF</th>
+                    <th>Telefone</th>
+                    <th>Cargo</th>
+                    <th>Lotação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for regimento in registros %}
+                <tr>
+                    <td>{{ regimento.id }}</td>
+                    <td>{{ regimento.titulo }}</td>
+                    <td>{{ regimento.capitulo }}</td>
+                    <td>{{ regimento.tipo_alteracao }}</td>
+                    <td>{{ regimento.justificativa }}</td>
+                    <td>{{ regimento.nome_completo }}</td>
+                    <td>{{ regimento.email }}</td>
+                    <td>{{ regimento.cpf }}</td>
+                    <td>{{ regimento.telefone }}</td>
+                    <td>{{ regimento.cargo }}</td>
+                    <td>{{ regimento.lotacao }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer">
+        <p>Relatório gerado automaticamente - {{ current_date }}</p>
+    </div>
+
+</body>
+</html>

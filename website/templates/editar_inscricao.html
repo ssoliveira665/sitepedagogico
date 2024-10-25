@@ -1,0 +1,51 @@
+<!-- Modal for editing inscription -->
+<div class="modal fade" id="editarInscricaoModal" tabindex="-1" aria-labelledby="editarInscricaoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarInscricaoModalLabel">Editar Inscrição</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editarInscricaoForm" method="POST" action="{% url 'editar_inscricao' inscricao.id %}">
+                    {% csrf_token %}
+
+                    <!-- Nome Completo -->
+                    <div class="mb-3">
+                        <label for="nome_completo" class="form-label">Nome Completo</label>
+                        <input type="text" class="form-control" id="nome_completo" name="nome_completo" value="{{ inscricao.candidato.nome_completo }}" required>
+                    </div>
+
+                    <!-- CPF -->
+                    <div class="mb-3">
+                        <label for="cpf" class="form-label">CPF</label>
+                        <input type="text" class="form-control" id="cpf" name="cpf" value="{{ inscricao.candidato.cpf }}" required>
+                    </div>
+
+                    <!-- Telefone -->
+                    <div class="mb-3">
+                        <label for="telefone" class="form-label">Telefone</label>
+                        <input type="text" class="form-control" id="telefone" name="telefone" value="{{ inscricao.telefone }}" required>
+                    </div>
+
+                    <!-- Endereço -->
+                    <div class="mb-3">
+                        <label for="endereco" class="form-label">Endereço</label>
+                        <input type="text" class="form-control" id="endereco" name="endereco" value="{{ inscricao.endereco }}" required>
+                    </div>
+
+                    <!-- Prova de Todas as Disciplinas -->
+                    <div class="mb-3">
+                        <label for="prova_todas_disciplinas" class="form-label">Prova de Todas as Disciplinas</label>
+                        <select class="form-control" id="prova_todas_disciplinas" name="prova_todas_disciplinas" required>
+                            <option value="Sim" {% if inscricao.prova_todas_disciplinas == 'Sim' %}selected{% endif %}>Sim</option>
+                            <option value="Não" {% if inscricao.prova_todas_disciplinas == 'Não' %}selected{% endif %}>Não</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

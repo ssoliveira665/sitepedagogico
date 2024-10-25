@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f6f9;
+        }
+
+        .navbar {
+            background-color: #343a40;
+            padding: 10px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            color: #ff6f00;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .navbar-nav .nav-link {
+            color: #adb5bd;
+            font-size: 1rem;
+            margin-right: 20px;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #fff;
+        }
+
+        .sidebar {
+            background-color: #2c2f33;
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 56px;
+            left: 0;
+            padding: 20px 0;
+        }
+
+        .sidebar h4 {
+            color: #ff6f00;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .sidebar .admin-info {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 15px;
+        }
+
+        .sidebar .admin-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .sidebar .admin-info p {
+            color: #fff;
+            margin: 5px 0;
+        }
+
+        .sidebar a {
+            color: #adb5bd;
+            padding: 10px;
+            text-decoration: none;
+            display: block;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background-color: #ff6f00;
+            color: white;
+        }
+
+        .main-content {
+            margin-left: 270px;
+            margin-top: 70px;
+            padding: 20px;
+        }
+
+        .table-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table th, table td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        table th {
+            background-color: #ff6f00;
+            color: white;
+            text-align: center;
+        }
+
+        table td {
+            text-align: center;
+        }
+
+        .filter-section {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#">Admin Panel</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fas fa-user"></i> Perfil</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fas fa-cogs"></i> Configurações</a>
+                </li>
+                <li class="nav-item">
+                    <form method="POST" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link nav-link">
+                            <i class="fas fa-sign-out-alt"></i> Sair
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="admin-info">
+            <img src="{% static 'img/admin_background.jpg' %}" alt="Admin Avatar" class="admin-avatar">
+            <p><i class="fas fa-user"></i> {{ user.nome_completo }}</p>
+            <p><i class="fas fa-envelope"></i> {{ user.email }}</p>
+        </div>
+        <a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="#"><i class="fas fa-users"></i> Usuários</a>
+        <a href="#"><i class="fas fa-chart-bar"></i> Estatísticas</a>
+        <a href="#"><i class="fas fa-cogs"></i> Configurações</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1>Painel Administrativo</h1>
+
+        <!-- Dados do Funcionário Tab -->
+        <div class="table-container">
+            <h2>Funcionários Registrados</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome Completo</th>
+                        <th>RG</th>
+                        <th>CPF</th>
+                        <th>Telefone</th>
+                        <th>E-mail</th>
+                        <th>Cargo</th>
+                        <th>Lotação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for funcionario in funcionarios %}
+                        <tr>
+                            <td>{{ funcionario.id }}</td>
+                            <td>{{ funcionario.nome_completo }}</td>
+                            <td>{{ funcionario.rg }}</td>
+                            <td>{{ funcionario.cpf }}</td>
+                            <td>{{ funcionario.telefone }}</td>
+                            <td>{{ funcionario.email }}</td>
+                            <td>{{ funcionario.cargo }}</td>
+                            <td>{{ funcionario.lotacao }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Dados da Votação Tab -->
+        <div class="table-container mt-4">
+            <h2>Histórico de Regimentos</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Capítulo</th>
+                        <th>Tipo de Alteração</th>
+                        <th>Justificativa</th>
+                        <th>Nome Completo</th>
+                        <th>Email</th>
+                        <th>CPF</th>
+                        <th>Telefone</th>
+                        <th>Cargo</th>
+                        <th>Lotação</th>
+                        <th>Observações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for regimento in registros %}
+                    <tr>
+                        <td>{{ regimento.id }}</td>
+                        <td>{{ regimento.titulo }}</td>
+                        <td>{{ regimento.capitulo }}</td>
+                        <td>{{ regimento.tipo_alteracao }}</td>
+                        <td>{{ regimento.justificativa }}</td>
+                        <td>{{ regimento.nome_completo }}</td>
+                        <td>{{ regimento.email }}</td>
+                        <td>{{ regimento.cpf }}</td>
+                        <td>{{ regimento.telefone }}</td>
+                        <td>{{ regimento.cargo }}</td>
+                        <td>{{ regimento.lotacao }}</td>
+                        <td>{{ regimento.observacoes_adicionais }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
