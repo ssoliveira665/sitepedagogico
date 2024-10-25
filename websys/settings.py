@@ -26,7 +26,6 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['pedagogico.semedcanaadoscarajas.pa.gov.br', 'www.pedagogico.semedcanaadoscarajas.pa.gov.br']
 
-
 # Application definition
 
 INSTALLED_APPS = [
