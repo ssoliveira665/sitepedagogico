@@ -100,7 +100,7 @@ from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
 
-from django.urls import path
+from django.urls import path, include
 from .views import home, eja_cadastro, CustomLoginView, logout_view, logout_confirm, cadastro_usuario, verificar_cpf_ajax, area_do_candidato
 from . import views
 from .views import search_schools_by_address  # Correct function name
