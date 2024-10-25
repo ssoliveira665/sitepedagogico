@@ -193,6 +193,11 @@
                     <a class="nav-link" href="#"><i class="fas fa-cogs"></i> Configurações</a>
                 </li>
                 <li class="nav-item">
+                    <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#uploadArquivoModal">
+                        <i class="fas fa-file-upload"></i> Arquivos
+                    </a>
+                </li>
+                <li class="nav-item">
                     <form method="POST" action="{% url 'logout' %}">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-link nav-link">
@@ -203,6 +208,7 @@
             </ul>
         </div>
     </nav>
+
 
     <!-- Sidebar -->
     <div class="sidebar">
@@ -256,76 +262,39 @@
             </div>
         </div>
 
-        <!-- Tabela de Inscrições -->
-        <div class="table-container">
-            <h2>Inscrições Registradas</h2>
-            <table id="inscricoes-table" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th style="color: black; text-align: center;">ID</th>
-                        <th style="color: black; text-align: center;">Nome do Candidato</th>
-                        <th style="color: black; text-align: center;">CPF</th>
-                        <th style="color: black; text-align: center;">Data de Inscrição</th>
-                        <th style="color: black; text-align: center;">Status</th>
-                        <th style="color: black; text-align: center;">Local</th>
-                        <th style="color: black; text-align: center;">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for inscricao in inscricoes %}
-                    <tr>
-                        <td>{{ inscricao.id }}</td>
-                        <td>{{ inscricao.candidato.nome_completo }}</td>
-                        <td>{{ inscricao.candidato.cpf }}</td>
-                        <td>{{ inscricao.data_inscricao|date:"d/m/Y" }}</td>
-                        <td>{{ inscricao.status }}</td>
-                        <td>{{ inscricao.local_exame }}</td>
-                        <td>
-                            <a href="#" class="btn btn-info btn-sm view-inscricao"
-                            data-bs-toggle="modal"
-                            data-bs-target="#inscricaoModal"
-                            data-id="{{ inscricao.id }}"
-                            data-nome="{{ inscricao.candidato.nome_completo }}"
-                            data-cpf="{{ inscricao.candidato.cpf }}"
-                            data-data="{{ inscricao.data_inscricao|date:'d/m/Y' }}"
-                            data-responsavel="{{ inscricao.responsavel_legal }}"
-                            data-telefone="{{ inscricao.telefone }}"
-                            data-endereco="{{ inscricao.endereco }}"
-                            data-cidade="{{ inscricao.cidade }}"
-                            data-bairro="{{ inscricao.bairro }}"
-                            data-necessidade="{{ inscricao.tipo_necessidade_especial }}"
-                            data-aprovado="{{ inscricao.aprovado }}"
-                            data-local="{{ inscricao.local_exame }}"
-                            data-status="{{ inscricao.status }}">
-                            <i class="fas fa-eye"></i> Ver
-                        </a>
+<!-- Tabela de Funcionários -->
+<div class="table-container">
+    <h2>Funcionários Registrados</h2>
+    <table id="funcionarios-table" class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome Completo</th>
+                <th>RG</th>
+                <th>CPF</th>
+                <th>Telefone</th>
+                <th>E-mail</th>
+                <th>Cargo</th>
+                <th>Lotação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for funcionario in funcionarios %}
+                <tr>
+                    <td>{{ funcionario.id }}</td>
+                    <td>{{ funcionario.nome_completo }}</td>
+                    <td>{{ funcionario.rg }}</td>
+                    <td>{{ funcionario.cpf }}</td>
+                    <td>{{ funcionario.telefone }}</td>
+                    <td>{{ funcionario.email }}</td>
+                    <td>{{ funcionario.cargo }}</td>
+                    <td>{{ funcionario.lotacao }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
-                        <a href="#" class="btn btn-warning btn-sm edit-inscricao" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#editInscricaoModal" 
-                        data-id="{{ inscricao.id }}" 
-                        data-nome="{{ inscricao.candidato.nome_completo }}" 
-                        data-nota="{{ inscricao.nota_prova }}"
-                        data-status="{{ inscricao.status }}"
-                        data-disciplinas="{{ inscricao.disciplinas_aprovadas }}"
-                        data-prova_realizada="{{ inscricao.prova_realizada }}">
-                        <i class="fas fa-edit"></i> Editar
-                     </a>
-                     
-                     <a href="#" class="btn btn-danger btn-sm inativar-inscricao" data-id="{{ inscricao.id }}" data-nome="{{ inscricao.candidato.nome_completo }}">
-                        <i class="fas fa-trash-alt"></i> Deletar
-                    </a>
-                    
-                            
-                            
-                </td>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
 
     <!-- Modal de Visualização -->
     <div class="modal fade" id="inscricaoModal" tabindex="-1" aria-labelledby="inscricaoModalLabel" aria-hidden="true">
@@ -363,6 +332,33 @@
         </div>
     </div>
 <!-- Modal -->
+
+<!-- Modal de Upload de Arquivo -->
+<div class="modal fade" id="uploadArquivoModal" tabindex="-1" aria-labelledby="uploadArquivoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadArquivoModalLabel">Upload de Planilha de Funcionários</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" enctype="multipart/form-data" action="{% url 'upload_arquivo' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="arquivo" class="form-label">Selecione a Planilha (Excel)</label>
+                        <input class="form-control" type="file" id="arquivo" name="arquivo" accept=".xlsx" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+
 
     <!-- Modal de Confirmação de Exclusão -->
     <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
@@ -815,6 +811,12 @@
     });
 });
 
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#funcionarios-table').DataTable();
+    });
 </script>
 
 

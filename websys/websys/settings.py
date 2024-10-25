@@ -2,6 +2,15 @@ from pathlib import Path
 import os
 #import environ
 
+
+
+# No arquivo settings.py
+
+SECURE_SSL_REDIRECT = False  # Desativa redirecionamento automático para HTTPS
+SESSION_COOKIE_SECURE = False  # Garante que cookies de sessão não exijam HTTPS
+CSRF_COOKIE_SECURE = False  # Garante que o CSRF não exija HTTPS
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -15,10 +24,7 @@ SECRET_KEY = 'django-insecure-lzc)l!c$ew3kylcssvcvdr^5^ww9=wp$ivt@&$o6pei+!0$oug
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['15.228.59.223', 'localhost', '127.0.0.1']
-
-
-
+ALLOWED_HOSTS = ['54.233.92.107', '15.228.59.223', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -139,7 +145,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = 'login'  # URL para onde redireciona se o usuário não estiver autenticado
-LOGIN_REDIRECT_URL = 'area_do_candidato'  # Para onde redireciona após o login bem-sucedido
+LOGIN_REDIRECT_URL = '/listar_funcionarios/'  # URL correspondente à página de listagem de funcionários
 LOGOUT_REDIRECT_URL = 'pagina_inicial'  # Para onde redireciona após o logout
 
 # Em settings.py

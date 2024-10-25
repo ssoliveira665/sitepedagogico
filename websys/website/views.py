@@ -1,4 +1,7 @@
+from xhtml2pdf import pisa
+
 import os
+import pandas as pd
 from django.conf import settings
 from django.shortcuts import render, redirect
 from .models import Usuario
@@ -53,10 +56,28 @@ import csv
 
 from django.contrib.auth import get_user_model
 
+from .models import RegimentoCadastro
+
 import json
 from .forms import InscricaoSearchForm
 from .forms import InscricaoFilterForm  # Importe o formulário de filtro
 from .forms import InscricaoForm
+
+from django.views.decorators.csrf import csrf_exempt
+from .models import Funcionario  # Supondo que tenha um modelo Funcionario
+from .forms import RegimentoCadastroForm
+from .forms import RegimentoForm
+from .models import RegimentoCadastro, Registro  # Certifique-se de que o nome do modelo está correto
+
+from openpyxl import Workbook
+
+import openpyxl
+
+
+
+
+
+
 
 
 
@@ -100,27 +121,16 @@ def verificar_cpf(request):
     return render(request, 'verificar_cpf.html')  # Página que exibe o modal para inserir CPF
 #**********************************************************************************************************
 
+@csrf_exempt
 def verificar_cpf_ajax(request):
-    if request.method == 'POST':
-        cpf = request.POST.get('cpf')
-        print(f"Recebido CPF: {cpf}")  # Log para verificar o CPF
-
-        if not cpf:
-            print("CPF não fornecido ou inválido")
-            return JsonResponse({'status': 'erro', 'message': 'CPF inválido'})
-
-        try:
-            # Verifica se o CPF existe no banco de dados
-            usuario = Usuario.objects.get(cpf=cpf)
-            print("CPF encontrado")  # Loga se o CPF foi encontrado
-            return JsonResponse({'status': 'existe'})
-        except Usuario.DoesNotExist:
-            print("CPF não encontrado")  # Loga se o CPF não foi encontrado
-            return JsonResponse({'status': 'nao_existe'})
-    
-    # Loga se o método não for POST
-    print("Método inválido")
-    return JsonResponse({'status': 'erro', 'message': 'Requisição inválida'})
+    if request.method == "POST":
+        cpf = request.POST.get('cpf', None)
+        # Verifica se o CPF existe no banco de dados
+        if Usuario.objects.filter(cpf=cpf).exists():
+            return JsonResponse({'valid': True})
+        else:
+            return JsonResponse({'valid': False})
+    return JsonResponse({'valid': False}, status=400)
 #**********************************************************************************************************
 
 def cadastro_usuario(request):
@@ -554,13 +564,18 @@ def update_info_pessoal(request):
 #**********************************************************************************************************       
 
 def my_view(request):
-    # Example of success message
-    messages.success(request, 'Your data was saved successfully.')
+    # Exemplo de mensagem de sucesso
+    messages.success(request, 'Seus dados foram salvos com sucesso.')
     
-    # Example of error message
-    messages.error(request, 'There was an error processing your request.')
+    # Exemplo de mensagem de erro
+    messages.error(request, 'Houve um erro ao processar sua solicitação.')
 
     return redirect('some_view')
+#**********************************************************************************************************
+
+def some_view(request):
+    return render(request, 'some_template.html')
+
 #**********************************************************************************************************
 
 def update_inscricao(request):
@@ -892,7 +907,7 @@ def admin_login_view(request):
             if user.is_superuser:
                 login(request, user)
                 # Redirect to the admin dashboard if the user is a superuser
-                return redirect('admin_dashboard')
+                return redirect('regimento_list')
             else:
                 messages.error(request, 'CPF válido, mas você não é um administrador.')
         else:
@@ -998,3 +1013,316 @@ def pagina_atualizacao(request):
     else:
         return redirect('home')  # Redireciona para a página principal quando o site não está em atualização
 #**********************************************************************************************************
+def upload_arquivo(request):
+    if request.method == 'POST' and request.FILES.get('arquivo'):
+        arquivo_csv = request.FILES['arquivo']
+        
+        try:
+            # Ler o arquivo CSV usando Pandas
+            df = pd.read_csv(arquivo_csv)
+
+            # Verifica se o dataframe foi lido corretamente
+            if df.empty:
+                messages.error(request, "O arquivo está vazio ou não pôde ser lido.")
+                return redirect('admin_dashboard')
+
+            print(f"DataFrame lido com {len(df)} linhas.")
+            
+            registros_salvos = 0
+            registros_pulados = 0
+
+            # Iterar sobre as linhas do dataframe e salvar no banco de dados
+            for index, row in df.iterrows():
+                print(f"Processando linha {index + 1}: {row.to_dict()}")
+
+                # Verifica se o CPF já existe no banco
+                if Funcionario.objects.filter(cpf=row['CPF']).exists():
+                    print(f"CPF {row['CPF']} já existe. Pulando registro.")
+                    registros_pulados += 1
+                    continue
+
+                # Criar o novo funcionário
+                funcionario = Funcionario(
+                    nome_completo=row['NOME COMPLETO'],
+                    rg=row['RG'],
+                    cpf=row['CPF'],
+                    telefone=row['TELEFONE'],
+                    email=row['E-MAIL'],
+                    cargo=row['CARGO'],
+                    lotacao=row['LOTAÇÃO'],
+                )
+
+                # Salvando no banco
+                funcionario.save()
+                registros_salvos += 1
+                print(f"Funcionario {funcionario.nome_completo} salvo com sucesso.")
+
+            messages.success(request, f'Arquivo enviado com sucesso! {registros_salvos} registros salvos, {registros_pulados} registros pulados.')
+        except Exception as e:
+            print(f"Erro ao processar o arquivo: {str(e)}")
+            messages.error(request, f'Ocorreu um erro ao processar o arquivo: {e}')
+
+        return redirect('admin_dashboard')
+
+    return render(request, 'admin_dashboard.html')
+#**********************************************************************************************************
+
+def listar_funcionarios(request):
+    funcionarios = Funcionario.objects.all()  # Busca todos os registros da tabela Funcionario
+    return render(request, 'listar_funcionarios.html', {'funcionarios': funcionarios})
+
+
+def admin_login(request):
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('listar_registros')  # Alterado para redirecionar à lista de regimentos
+        else:
+            messages.error(request, "E-mail ou senha incorretos.")
+    
+    return render(request, 'admin_login.html')
+#**********************************************************************************************************
+
+def consulta_publica(request):
+    if request.method == 'POST':
+        try:
+            # Capturar os dados enviados via POST
+            titulo = request.POST.get('titulo')
+            capitulo = request.POST.get('capitulo')
+            tipo_alteracao = request.POST.get('tipo_alteracao')
+            justificativa = request.POST.get('justificativa')
+            nome_completo = request.POST.get('nome_completo')
+            email = request.POST.get('email')
+            cpf = request.POST.get('cpf')
+            telefone = request.POST.get('telefone')
+            cargo = request.POST.get('cargo')
+            lotacao = request.POST.get('lotacao')
+            observacoes_adicionais = request.POST.get('observacoes_adicionais')
+
+            # Criar o objeto RegimentoCadastro e salvar no banco de dados
+            regimento_cadastro = RegimentoCadastro(
+                titulo=titulo,
+                capitulo=capitulo,
+                tipo_alteracao=tipo_alteracao,
+                justificativa=justificativa,
+                nome_completo=nome_completo,
+                email=email,
+                cpf=cpf,
+                telefone=telefone,
+                cargo=cargo,
+                lotacao=lotacao,
+                observacoes_adicionais=observacoes_adicionais
+            )
+            regimento_cadastro.save()
+
+            # Exibir mensagem de sucesso e redirecionar
+            messages.success(request, 'Sua sugestão foi enviada com sucesso!')
+            return redirect('consulta_publica_sucesso')
+
+        except Exception as e:
+            # Tratar possíveis erros durante o processo de salvamento
+            print(f"Erro ao salvar os dados: {e}")
+            messages.error(request, 'Ocorreu um erro ao enviar sua sugestão. Por favor, tente novamente.')
+
+    return render(request, 'consulta_publica.html')
+
+
+#**********************************************************************************************************
+def consulta_publica_sucesso(request):
+    return render(request, 'home.html')
+#**********************************************************************************************************
+def consulta_publica_view(request):
+    if request.method == "POST":
+        form = RegimentoCadastroForm(request.POST)
+        if form.is_valid():
+            form.save()  # This should save the form data to the database
+            return HttpResponse("Form successfully saved.")
+        else:
+            print(form.errors)  # This will print form validation errors to the console
+            return HttpResponse("Form data is invalid.")
+    else:
+        form = RegimentoCadastroForm()
+    return render(request, "consulta_publica.html", {"form": form})
+#**********************************************************************************************************
+
+def regimento_cadastro_view(request):
+    if request.method == 'POST':
+        form = RegimentoCadastroForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('home')  # Redireciona após o sucesso
+    else:
+        form = RegimentoCadastroForm()
+
+    return render(request, 'cadastro.html', {'form': form})
+#**********************************************************************************************************
+
+def cadastro_regimento(request):
+    if request.method == 'POST':
+        form = RegimentoForm(request.POST)
+        if form.is_valid():
+            form.save()  # Salva o formulário no banco de dados
+            # Redireciona ou exibe uma mensagem de sucesso
+    else:
+        form = RegimentoForm()
+    
+    return render(request, 'home.html', {'form': form})
+#**********************************************************************************************************
+
+def regimento_form_view(request, pk):
+    regimento = get_object_or_404(RegimentoCadastro, pk=pk)
+    
+    if request.method == 'POST':
+        form = RegimentoCadastroForm(request.POST, instance=regimento)
+        if form.is_valid():
+            form.save()
+            # Redirecionar após salvar
+    else:
+        form = RegimentoCadastroForm(instance=regimento)
+    
+    return render(request, 'seu_template.html', {'form': form})
+#**********************************************************************************************************
+
+def regimento_list_view(request):
+    registros = RegimentoCadastro.objects.all()  # Pegando todos os registros inicialmente
+    # Obtendo os valores dos filtros
+    tipo_alteracao = request.GET.get('tipo_alteracao', '')
+    nome_completo = request.GET.get('nome_completo', '')
+    lotacao = request.GET.get('lotacao', '')
+
+    # Aplicando os filtros
+    registros = RegimentoCadastro.objects.all()
+
+    if tipo_alteracao:
+        registros = registros.filter(tipo_alteracao__icontains=tipo_alteracao)
+    if nome_completo:
+        registros = registros.filter(nome_completo__icontains=nome_completo)
+    if lotacao:
+        registros = registros.filter(lotacao__icontains=lotacao)
+
+    # Obter a contagem total de pendentes e o último registro
+    total_pendentes = RegimentoCadastro.objects.filter(status='pendente').count() if hasattr(RegimentoCadastro, 'status') else None
+    ultimo_registro = RegimentoCadastro.objects.last()  # Último registro
+
+    context = {
+        'registros': registros,
+        'total_pendentes': total_pendentes,
+        'ultimo_registro': ultimo_registro,
+        'tipo_alteracao': tipo_alteracao,
+        'nome_completo': nome_completo,
+        'lotacao': lotacao
+    }
+
+    return render(request, 'regimento_list.html', context)
+#**********************************************************************************************************
+
+def cadastrar_regimento(request):
+    if request.method == "POST":
+        form = RegimentoCadastroForm(request.POST)
+        if form.is_valid():
+            # Salvar na tabela 'regimentocadastro'
+            regimentocadastro = form.save()
+
+            # Salvar os mesmos dados na tabela 'registro'
+            Registro.objects.create(
+                titulo=regimentocadastro.titulo,
+                capitulo=regimentocadastro.capitulo,
+                tipo_alteracao=regimentocadastro.tipo_alteracao,
+                justificativa=regimentocadastro.justificativa,
+                nome_completo=regimentocadastro.nome_completo,
+                email=regimentocadastro.email,
+                cpf=regimentocadastro.cpf,
+                telefone=regimentocadastro.telefone,
+                cargo=regimentocadastro.cargo,
+                lotacao=regimentocadastro.lotacao,
+                observacoes_adicionais=regimentocadastro.observacoes_adicionais,
+                data_submissao=regimentocadastro.data_submissao,
+            )
+            return redirect('sucesso')  # Redireciona após o sucesso
+    else:
+        form = RegimentoCadastroForm()
+    
+    return render(request, 'cadastro_regimento.html', {'form': form})
+#**********************************************************************************************************
+def listar_registros(request):
+    # Buscar todos os registros da tabela RegimentoCadastro
+    registros = RegimentoCadastro.objects.all()
+    # Passar os registros para o template
+    return render(request, 'regimento_list.html', {'registros': registros})
+#**********************************************************************************************************
+
+def lista_regimentos(request):
+    registros = RegimentoCadastro.objects.all()  # Pega todos os registros da tabela
+    return render(request, 'seu_template.html', {'registros': registros})
+#**********************************************************************************************************
+def exportar_csv(request):
+    tipo_alteracao = request.GET.get('tipo_alteracao')  # Obter o filtro da URL
+
+    registros = RegimentoCadastro.objects.all()
+    
+    if tipo_alteracao:
+        registros = registros.filter(tipo_alteracao=tipo_alteracao)
+    
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="registros.csv"'
+    
+    writer = csv.writer(response)
+    writer.writerow(['ID', 'Título', 'Capítulo', 'Tipo de Alteração', 'Justificativa', 'Nome Completo', 'Email', 'CPF', 'Telefone', 'Cargo', 'Lotação'])
+
+    for reg in registros:
+        writer.writerow([reg.id, reg.titulo, reg.capitulo, reg.tipo_alteracao, reg.justificativa, reg.nome_completo, reg.email, reg.cpf, reg.telefone, reg.cargo, reg.lotacao])
+
+    return response
+#**********************************************************************************************************
+def exportar_excel(request):
+    tipo_alteracao = request.GET.get('tipo_alteracao')  # Obter o filtro da URL
+
+    registros = RegimentoCadastro.objects.all()
+
+    if tipo_alteracao:
+        registros = registros.filter(tipo_alteracao=tipo_alteracao)
+    
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Registros"
+    
+    # Cabeçalhos
+    ws.append(['ID', 'Título', 'Capítulo', 'Tipo de Alteração', 'Justificativa', 'Nome Completo', 'Email', 'CPF', 'Telefone', 'Cargo', 'Lotação'])
+
+    for reg in registros:
+        ws.append([reg.id, reg.titulo, reg.capitulo, reg.tipo_alteracao, reg.justificativa, reg.nome_completo, reg.email, reg.cpf, reg.telefone, reg.cargo, reg.lotacao])
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="registros.xlsx"'
+    wb.save(response)
+
+    return response
+# ***********************************************************************************
+def exportar_pdf(request):
+    tipo_alteracao = request.GET.get('tipo_alteracao')  # Obter o filtro da URL
+
+    registros = RegimentoCadastro.objects.all()
+
+    if tipo_alteracao:
+        registros = registros.filter(tipo_alteracao=tipo_alteracao)
+
+    template_path = 'registros_pdf_template.html'  # Template para o PDF
+    context = {'registros': registros}
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="registros.pdf"'
+
+    template = get_template(template_path)
+    html = template.render(context)
+
+    pisa_status = pisa.CreatePDF(BytesIO(html.encode('utf-8')), dest=response)
+
+    if pisa_status.err:
+        return HttpResponse('Erro ao gerar o PDF', status=400)
+
+    return response
+# ***********************************************************************************

@@ -5,1483 +5,1092 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EJA - Cadastro</title>
+    <title>Consulta Pública - Setor Pedagógico</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <!-- Other head content -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
+    <style>
+        /* Cores e estilo base */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
 
+        /* Navbar moderna */
+        .navbar {
+            background-color: #002f6c;
+            padding: 10px 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand img {
+            height: 50px;
+        }
+
+        .navbar-nav .nav-link {
+            color: white !important;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #f47835 !important;
+        }
+
+        .btn-primary {
+            background-color: #f47835;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            border-radius: 30px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #d8682b;
+        }
+
+        .hero {
+            background-color: #002f6c;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+
+        /* Modernização dos cards */
+        .modern-card {
+            background: white;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+
+        .modern-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Estilização do footer */
+        footer {
+            background-color: #002f6c;
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        /* Carrossel */
+        /* Define a altura e garante que o carrossel ocupe 100% da viewport */
+    .carousel-inner {
+        height: 100vh; /* 100% da altura da janela */
+    }
+
+    .carousel-image {
+        object-fit: cover; /* Garante que a imagem preencha a área sem distorcer */
+        height: 100%; /* Ocupa toda a altura */
+        width: 100%; /* Ocupa toda a largura */
+    }
+
+    .carousel-caption {
+        position: absolute;
+        bottom: 10%; /* Posição do texto ajustada */
+        left: 10%;
+        right: 10%;
+        text-align: center;
+        color: white;
+    }
+
+    .carousel-caption h5 {
+        font-size: 2.5rem;
+        color: white;
+        font-weight: bold;
+    }
+
+    .carousel-caption p {
+        font-size: 1.2rem;
+        color: white;
+    }
+
+    .carousel-caption button {
+        font-size: 1.2rem;
+        padding: 10px 20px;
+    }
+
+    /* Responsividade - Ajuste para telas menores */
+    @media (max-width: 768px) {
+        .carousel-caption {
+            bottom: 20px;
+        }
+
+        .carousel-caption h5 {
+            font-size: 1.8rem;
+        }
+
+        .carousel-caption p {
+            font-size: 1rem;
+            display: block; /* Garante que o texto apareça em dispositivos menores */
+        }
+
+        .carousel-caption button {
+            font-size: 1rem;
+            padding: 8px 16px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .carousel-caption h5 {
+            font-size: 1.4rem;
+        }
+
+        .carousel-caption p {
+            font-size: 0.9rem;
+        }
+
+        .carousel-caption button {
+            font-size: 0.9rem;
+            padding: 6px 12px;
+        }
+    }
+
+        /* Modal consulta pública */
+        #consultaPublicaModal .modal-header {
+            background-color: #f47835;
+            color: white;
+        }
+
+        #consultaPublicaModal label {
+            font-weight: bold;
+        }
+
+        #consultaPublicaModal .form-control,
+        #consultaPublicaModal .form-select {
+            border-radius: 10px;
+        }
+
+
+         /* Modal consulta pública2 */
+         #consultaPublicaModal1 .modal-header {
+            background-color: #f47835;
+            color: white;
+        }
+
+        #consultaPublicaModal1 label {
+            font-weight: bold;
+        }
+
+        #consultaPublicaModal1 .form-control,
+        #consultaPublicaModal1 .form-select {
+            border-radius: 10px;
+        }
+
+
+
+        /* Cards das reportagens */
+        .card img {
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            color: #002f6c;
+        }
+
+    </style>
 </head>
-
-<style>
-    body {
-       font-family: 'Roboto', sans-serif;
-       background-color: #f5f7fa;
-   }
-
-   .modern-card {
-       background: linear-gradient(145deg, #ffffff, #f0f0f0);
-       box-shadow: 0 10px 20px rgba(236, 103, 14, 0.08);
-       border-radius: 15px;
-       transition: all 0.3s ease-in-out;
-       padding: 30px;
-       margin-bottom: 20px;
-   }
-
-   .modern-card:hover {
-       box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
-       transform: scale(1.03);
-   }
-
-   .card-title {
-       font-size: 1.5rem;
-       font-weight: bold;
-       color: #333;
-       margin-bottom: 15px;
-       position: relative;
-   }
-
-   .card-title::after {
-       content: '';
-       display: block;
-       width: 50px;
-       height: 3px;
-       background: #f57105;
-       margin: 10px auto;
-   }
-
-   .card-text {
-       font-size: 1rem;
-       color: #666;
-       margin-bottom: 20px;
-   }
-
-   .btn-modern {
-       background: #f57105;
-       color: white;
-       padding: 12px 25px;
-       font-size: 1rem;
-       border-radius: 50px;
-       transition: background 0.3s ease;
-       border: none;
-       text-decoration: none; /* Removes underline */
-   }
-
-   .btn-modern:hover {
-       background: #f57105;
-       color: #fff;
-       text-decoration: none;
-   }
-
-   .btn-modern:focus {
-       outline: none;
-       box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-   }
-</style>
 
 <body>
 
-   <!-- Navbar -->
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark">
-    <div class="container">
-        <!-- Logo -->
-        <a class="navbar-brand" href="#">
-            <img src="{% static 'img/logo prefeitura.png' %}" alt="Logo SEMED">
-        </a>
-
-        <!-- Navbar Toggler (for mobile view) -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <!-- Navbar Links -->
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <!-- Serviços e Eventos ao lado de Login -->
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Serviços</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Eventos</a>
-                </li>
-
-                
-
-                <!-- User Authentication Links -->
-                {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <span class="nav-link"><i class="fas fa-user"></i> {{ user.nome_completo }}</span>
-                    </li>
-                    <li class="nav-item">
-                        <span class="nav-link"><i class="fas fa-id-card"></i> CPF: {{ user.cpf }}</span>
-                    </li>
-                    <li class="nav-item">
-                        <form method="POST" action="{% url 'logout' %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-link nav-link"><i class="fas fa-sign-out-alt"></i>
-                                Sair</button>
-                        </form>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a href="{% url 'login' %}" class="nav-link"><i class="fas fa-sign-in-alt"></i> Login</a>
-                    </li>
-                {% endif %}
-
-                <!-- Administrator Link always visible -->
-                <li class="nav-item">
-                    <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#cpfModal">
-                        <i class="fas fa-user-shield"></i> Administrador
-                    </a>
-                </li>
-                
-                
-
-            </ul>
-        </div>
-    </div>
-</nav>
-
-
-<!-- CPF Administrador Modal -->
-<!-- CPF Modal -->
-<div class="modal fade" id="cpfModal" tabindex="-1" aria-labelledby="cpfModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="cpfModalLabel">Verificar CPF</h5>
-        </div>
-        <div class="modal-body">
-          <form id="cpfForm">
-            <div class="form-group">
-              <label for="cpfInput">Digite seu CPF:</label>
-              <input type="text" class="form-control" id="cpfInput" name="cpf" placeholder="000.000.000-00" required>
-            </div>
-            <div id="cpfErrorMessage" class="text-danger"></div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancelBtn">Cancelar</button>
-          <button type="button" class="btn btn-primary" id="verifyCpfBtn">Verificar</button>
-        </div>
-      </div>
-    </div>
-</div>
-
-
-  
-
-<!-- Trigger Button for Modal
-<li class="nav-item">
-    <a href="#" class="nav-link" data-toggle="modal" data-target="#cpfVerificationModal">
-        <i class="fas fa-user-shield"></i> Administrador
-    </a>
-</li> -->
-
-
-
-
-    <!-- Hero Section -->
-    <section class="hero">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <h1>Cadastre-se no Exame de Suplência 2024</h1>
-            <p>Exame de Conclusão do Ensino Fundamental</p>
-            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#verificarCpfModal" id="registerButton"
-   data-spinner-url="{% static 'img/spinner.gif' %}">Cadastre-se Agora</a>
+            <!-- Logo -->
+            <a class="navbar-brand" href="#">
+                <img src="{% static 'img/semed_branca.png' %}" alt="Logo SEMED">
+            </a>
 
+
+            <!-- Navbar Toggler -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navbar Links -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Serviços</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Eventos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#cpfModal">
+                            <i class="fas fa-user-shield"></i> Administrador
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+
+        </div>
+
+    </nav>
+
+    <!-- Carrossel Hero -->
+<div id="carouselHero" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        <!-- Primeira Imagem -->
+        <div class="carousel-item active">
+            <img src="{% static 'img/semed001.png' %}" class="d-block w-100 carousel-image" alt="Imagem Canaã 1">
+            <div class="carousel-caption">
+                <h5 class="display-6">Consulta Pública 2024</h5>
+                <p class="lead d-none d-md-block">Participe da votação para a remodelação do Regimento Escolar Unificado.</p>
+                <!-- Botão para abrir a modal de consulta pública -->
+                <button type="button" class="btn btn-primary btn-lg mt-3" data-bs-toggle="modal" data-bs-target="#consultaPublicaModal">
+                    Dê Sua Opinião
+                </button>
+            </div>
+        </div>
+
+        <!-- Segunda Imagem -->
+        <div class="carousel-item">
+            <img src="{% static 'img/semed002.png' %}" class="d-block w-100 carousel-image" alt="Imagem Canaã 2">
+            <div class="carousel-caption">
+                <h5 class="display-6">Transforme a Educação</h5>
+                <p class="lead d-none d-md-block">A educação está em suas mãos, participe e opine nas mudanças propostas.</p>
+                <!-- Botão para abrir a modal de consulta pública -->
+                <button type="button" class="btn btn-primary btn-lg mt-3" data-bs-toggle="modal" data-bs-target="#consultaPublicaModal">
+                    Dê Sua Opinião
+                </button>
+            </div>
+        </div>
+
+        <!-- Terceira Imagem -->
+        <div class="carousel-item">
+            <img src="{% static 'img/semed003.png' %}" class="d-block w-100 carousel-image" alt="Imagem Canaã 3">
+            <div class="carousel-caption">
+                <h5 class="display-6">Educação de Qualidade</h5>
+                <p class="lead d-none d-md-block">Veja as transformações que a prefeitura propõe para a educação de Canaã dos Carajás.</p>
+                <!-- Botão para abrir a modal de consulta pública -->
+                <button type="button" class="btn btn-primary btn-lg mt-3" data-bs-toggle="modal" data-bs-target="#consultaPublicaModal">
+                    Dê Sua Opinião
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controles do Carrossel -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselHero" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselHero" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Próximo</span>
+    </button>
+</div>
+            </div>
+        </div>
+
+
+        <!-- <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions"
+            data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions"
+            data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Próximo</span>
+        </button> -->
+    </section>
+
+    <!-- Cards Section -->
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <!-- Card 1: Consulta Pública -->
+            <div class="col-md-4">
+                <div class="modern-card text-center p-4 shadow-sm">
+                    <h5 class="card-title mb-3">Consulta Pública</h5>
+                    <p class="card-text">Opine sobre as mudanças no Regimento Escolar Unificado de Canaã dos Carajás.
+                    </p>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#consultaPublicaModal">Regimento Escolar Unificado</button>
+                </div>
+            </div>
+            <!-- Card 2: Baixar Decreto -->
+            <div class="col-md-4">
+                <div class="modern-card text-center p-4 shadow-sm">
+                    <h5 class="card-title mb-3">Baixar Regimento Unificado</h5>
+                    <p class="card-text">Acesse o Regimento Escolar Unificado vigente para revisão e análise.</p>
+                    <a href="{% static 'downloads/RegimentoEscolar2018_oficial.pdf' %}" class="btn btn-primary"
+                        download>FAÇA DOWNLOAD AQUE...</a>
+                </div>
+            </div>
+
+            <!-- Card 3: Baixar Legislação -->
+            <div class="col-md-4">
+                <div class="modern-card text-center p-4 shadow-sm">
+                    <h5 class="card-title mb-3">Baixar LDBEN 9.394/96</h5>
+                    <p class="card-text">Faça o download da Lei de Diretrizes e Bases da Educação LDBEN 9.394/96.</p>
+                    <a href="{% static 'downloads/lei9394_ldbn.pdf' %}" class="btn btn-primary" download>FAÇA DOWNLOAD AQUE...</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Seção de Reportagens Relacionadas -->
+    <section class="container mt-5">
+        <h2 class="text-center mb-4">Construindo a Educação Juntos</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="{% static 'img/aluno004.jpeg' %}" class="card-img-top" alt="Imagem da Reportagem 1">
+                    <div class="card-body">
+                        <h5 class="card-title" style="text-align: justify;">Consulta Pública sobre a Adequação do Regimento Escolar Unificado das Escolas Públicas de Canaã dos Carajás</h5>
+                        <p class="card-text" style="text-align: justify;">Este é um momento importante para revisarmos e atualizarmos o Regimento Escolar Unificado.</p>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#consultaModal">
+                            Ler Mais
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Modal Informação 1-->
+                <div class="modal fade" id="consultaModal" tabindex="-1" aria-labelledby="consultaModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="consultaModalLabel">Consulta Pública sobre a Adequação do Regimento Escolar Unificado das Escolas Públicas de Canaã dos Carajás</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p class="modal-text" style="text-align: justify;">A Secretaria Municipal de Educação de Canaã dos Carajás convida toda a comunidade escolar, pais, alunos, professores, gestores e demais interessados para participarem da consulta pública referente à adequação do Regimento Escolar Unificado das escolas públicas do município.</p>
+                                <p class="modal-text" style="text-align: justify;">Este é um momento importante para revisarmos e atualizarmos o Regimento Escolar Unificado, garantindo que ele esteja em consonância com as diretrizes educacionais vigentes e reflita as necessidades e expectativas da nossa comunidade escolar. O processo visa construir um ambiente escolar ainda mais democrático, transparente e eficiente, valorizando a participação de todos.</p>
+                                <p class="modal-text" style="text-align: justify;"><strong>A sua opinião é fundamental!</strong> Envie suas sugestões até o dia <strong>29 de outubro A 17 de novembro de 2024</strong> e contribua para o aprimoramento das nossas instituições de ensino.</p>
+                                <p class="modal-text" style="text-align: justify;">Para participar, basta registrar suas sugestões, no formulário de opinião.</p>
+                                <p class="modal-text" style="text-align: justify;"><strong>Contamos com a participação de todos!</strong></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal-->
+                
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="{% static 'img/aluno002.jpeg' %}" class="card-img-top" alt="Imagem da Reportagem 2">
+                    <div class="card-body">
+                        <h5 class="card-title" style="text-align: justify;">Opinião sobre o Regimento Escolar Unificado das Escolas Municipais de Canaã dos Carajás</h5>
+                        <p class="card-text" style="text-align: justify;">Ajustando-a às novas demandas do Regimento Escolar Unificado.</p>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#consultaModal1">
+                                Ler Mais
+                            </button>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Modal Informação 2-->
+             <div class="modal fade" id="consultaModal1" tabindex="-1" aria-labelledby="consultaModalLabel1" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="consultaModalLabel1">Regimento Escolar Unificado Das Unidades De Ensino Da Rede Pública Municilpal De Canaã Dos Carajás</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="modal-text" style="text-align: justify;">A Secretaria Municipal de Educação de Canaã dos Carajás convoca toda a comunidade escolar – pais, alunos, professores, gestores e demais interessados – para participar ativamente da Consulta Pública sobre a Revisão do Regimento Escolar Unificado das escolas municipais. Este é um convite ao exercício democrático de construção coletiva, visando à modernização e adequação das diretrizes que norteiam a conduta, os direitos e os deveres dos nossos estudantes.</p>
+                            <p class="modal-text" style="text-align: justify;">A revisão do Regimento Escolar Unificado representa um marco fundamental para garantir que as normas educacionais acompanhem as transformações sociais, culturais e tecnológicas do século XXI. É imprescindível que o Regimento Escolar Unificado seja um reflexo fiel das necessidades atuais, promovendo um ambiente escolar mais inclusivo, justo e equitativo, capaz de formar cidadãos críticos, responsáveis e engajados na sociedade.</p>
+                            <p class="modal-text" style="text-align: justify;"><strong>A sua opinião é fundamental!</strong> Envie suas sugestões até o dia <strong>29 de outubro A 17 de novembro de 2024</strong> e contribua para o aprimoramento das nossas instituições de ensino.</p>
+                            <p class="modal-text" style="text-align: justify;">Para participar, basta registrar suas sugestões, no formulário de opinião.</p>
+                            <p class="modal-text" style="text-align: justify;"><strong>Contamos com a participação de todos!</strong></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal-->
+
+            
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="{% static 'img/municipal003.jpg' %}" class="card-img-top" alt="Imagem da Reportagem 3">
+                    <div class="card-body">
+                        <h5 class="card-title" style="text-align: justify;">Regimento Escolar Unificado: O Que Muda, e que pode ser melhorado?</h5>
+                        <p class="card-text" style="text-align: justify;">Entenda as principais mudanças propostas no
+                            Regimento Escolar Unificado, sobre os serviços
+                            edicacionais.</p>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#consultaModal2">
+                                Ler Mais
+                            </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
-    
 
-    <!-- Modal para verificar CPF -->
-    <div class="modal fade" id="verificarCpfModal" tabindex="-1" aria-labelledby="verificarCpfModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
+    <!-- Modal Informação 3-->
+    <div class="modal fade" id="consultaModal2" tabindex="-1" aria-labelledby="consultaModalLabel2" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="verificarCpfModalLabel">Verificar CPF</h5>
+                    <h5 class="modal-title" id="consultaModalLabel2">Consulta Pública sobre a Reformulação do Regimento Escolar Unificado Municipal de Diretrizes Educacionais em Canaã dos Carajás</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="verificarCpfForm">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="cpf" class="form-label">Digite seu CPF</label>
-                            <input type="text" class="form-control" id="cpf" name="cpf" required>
-                        </div>
-                        <button type="button" class="btn btn-primary" id="verificarCpfBtn">Verificar CPF</button>
-                    </form>
+                    <p class="modal-text" style="text-align: justify;">A Secretaria Municipal de Educação de Canaã dos Carajás está promovendo uma consulta pública para debater a reformulação do Regimento Escolar Unificado Municipal de Diretrizes Educacionais, que regula o funcionamento das escolas públicas do município. Este é um passo fundamental para garantir que as políticas educacionais locais estejam em harmonia com as novas exigências do sistema de ensino, além de reforçar a participação ativa da comunidade escolar nesse processo.</p>
+                    <p class="modal-text" style="text-align: justify;">O Regimento Escolar Unificado abrange temas cruciais como a gestão pedagógica, a formação dos professores, a organização escolar, e os direitos e deveres de pais, alunos e servidores da educação. A reformulação visa modernizar essas diretrizes, garantindo que estejam alinhadas com as demandas contemporâneas e com as melhores práticas educacionais adotadas no Brasil.</p>
+                    <p class="modal-text" style="text-align: justify;"><strong>A sua opinião é fundamental!</strong> Envie suas sugestões até o dia <strong>29 de outubro A 17 de novembro de 2024</strong> e contribua para o aprimoramento das nossas instituições de ensino.</p>
+                    <p class="modal-text" style="text-align: justify;">Para participar, basta registrar suas sugestões, no formulário de opinião.</p>
+                    <p class="modal-text" style="text-align: justify;"><strong>Contamos com a participação de todos!</strong></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
                 </div>
             </div>
         </div>
     </div>
+    <!-- Modal-->
 
 
-    <!-- Modal for user registration -->
-<div class="modal fade" id="cadastroModal" tabindex="-1" aria-labelledby="cadastroModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl"> <!-- Modal is larger to accommodate more fields -->
-        <div class="modal-content">
-            <div class="modal-header d-flex justify-content-between align-items-center">
-                <h5 class="modal-title" id="cadastroModalLabel">Informações do Participante</h5>
-                <p class="modal-location text-end" id="modalDateLocation">Canaã dos Carajás, PA: <span id="currentDate"></span></p>
-            </div>
-            <div class="modal-body">
 
-                <!-- Timer with modern design -->
-                <div class="timer-container text-center">
-                    <div class="timer-circle">
-                        <span id="timer">20:00</span>
-                    </div>
-                    <p style="font-size: 1.0rem; font-weight: bold; color: #d9534f; text-align: center; margin-top: 10px;">
-                        ⏳ Tempo restante para preencher o cadastro.
-                    </p>
-                    
-                    <p style="font-size: 1.2rem; font-weight: bold; color: #f47835; text-align: center; margin-top: 20px;">
-                        📚 Exame de Suplência 2024.
-                    </p>
-                    
+    <!-- Modal para Verificação de CPF -->
+    <div class="modal fade" id="cpfModal" tabindex="-1" aria-labelledby="cpfModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cpfModalLabel">Verificação de CPF</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <hr>
-
-                <form id="cadastroForm" method="POST" action="{% url 'cadastro_usuario' %}">
-                    {% csrf_token %}
-
-                    <div class="row">
-                        <!-- Nome Completo -->
-                        <div class="col-md-4 mb-3">
-                            <label for="nome_completo" class="form-label">Nome Completo</label>
-                            <input type="text" class="form-control" id="nome_completo" name="nome_completo" required>
+                <div class="modal-body">
+                    <form id="cpfVerificationForm">
+                        <div class="mb-3">
+                            <label for="cpfInput" class="form-label">Digite seu CPF</label>
+                            <input type="text" class="form-control" id="cpfInput" placeholder="000.000.000-00" required>
                         </div>
-
-                        <!-- Email -->
-                        <div class="col-md-4 mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-
-                        <!-- CPF -->
-                        <div class="col-md-4 mb-3">
-                            <label for="cpf" class="form-label">Número do CPF do Candidato</label>
-                            <input type="text" id="cpf" name="cpf" class="form-control" placeholder="Digite seu CPF" required>
-                        </div>
-                        
-                    </div>
-                    <!-- ****************************************************************************************************************************** -->
+                    </form>
+                    <div id="cpfError" class="text-danger" style="display: none;">CPF inválido. Tente novamente.</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="submit" class="btn btn-primary" id="verifyCpfButton">Verificar CPF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
 
 
-                    <div class="row">
-                        
-
-                        <!-- Data de Nascimento -->
-                        <div class="col-md-4 mb-3">
-                            <label for="dataNascimento" class="form-label">Data de Nascimento</label>
-                            <input type="date" class="form-control" id="data_nascimento" name="data_nascimento" required onchange="verificarIdade()">
-                        </div>
-
-                          <!-- Radio buttons para maior de idade, inicialmente desabilitados -->
-                        <div class="col-md-4 mb-3">
-                            <label for="maior_de_18" class="form-label">O Candidato é maior de 18 anos?</label><br>
-                            <div class="form-check form-check-inline">
-                                <input type="radio" id="maior_de_18_sim" name="maior_de_18" value="Sim" class="form-check-input" onchange="verificarMaiorIdade()" disabled checked>
-                                <label for="maior_de_18_sim" class="form-check-label">Sim</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input type="radio" id="maior_de_18_nao" name="maior_de_18" value="Não" class="form-check-input" onchange="verificarMaiorIdade()" disabled>
-                                <label for="maior_de_18_nao" class="form-check-label">Não</label>
-                            </div>
-                        </div>
-
-                        <!-- Nome do Responsável legal -->
-                        <div class="col-md-4 mb-3">
-                            <label for="nomeResponsavel" class="form-label">Nome do Responsável Legal</label>
-                            <input type="text" class="form-control" id="nome_responsavel" name="nome_responsavel" disabled>
-                        </div>
-                        
-                        
-                    </div>
-
-                    <!-- ****************************************************************************************************************************** -->
-
-                    <div class="row">
-                       
-
-                        <div class="col-md-4 mb-3">
-                            <label for="cpf_responsavel" class="form-label">CPF do Responsável</label>
-                        <input type="text" class="form-control" id="cpf_responsavel" name="cpf_responsavel" disabled>
-                        </div>
-                        
-                        <!-- Nome do Responsável legal -->
-                        <div class="col-md-4 mb-3">
-                            <label for="rg_responsavel" class="form-label">RG do Responsável</label>
-                        <input type="text" class="form-control" id="rg_responsavel" name="rg_responsavel" disabled>
-                        </div>
-
-                        <!-- Tipo de Responsável Legal -->
-                        <div class="col-md-4 mb-3">
-                            <label for="tipoResponsavel" class="form-label">Tipo de Responsável Legal</label>
-                            <select class="form-control" id="tipo_responsavel" name="tipo_responsavel" disabled>
-                                <option value="">Selecione</option>
-                                <option value="pai">Pai</option>
-                                <option value="mae">Mãe</option>
-                                <option value="outro">Outro</option>
-                            </select>
-                        </div>
-
-                    </div>
-
-                    <!-- ****************************************************************************************************************************** -->
-
-                    <div class="row">
-                        
-
-                        <!-- Telefone -->
-                        <div class="col-md-4 mb-3">
-                            <label for="telefone" class="form-label">Nº de Telefone do Candidato</label>
-                            <input type="tel" class="form-control" id="telefone" name="telefone" required>
-                        </div>
-
-                        <!-- Telefone 2 -->
-                        <div class="col-md-4 mb-3">
-                            <label for="telefone_2" class="form-label">Telefone de Contato 2</label>
-                            <input type="tel" class="form-control" id="telefone_2" name="telefone_2">
-                        </div>
-
-                        <!-- Cidade -->
-                        <div class="col-md-4 mb-3">
-                            <label for="cidade" class="form-label">Cidade</label>
-                            <input type="text" class="form-control" id="cidade" name="cidade" required>
-                        </div>
-
-                    </div>
-                    <!-- ****************************************************************************************************************************** -->
-
-                    <div class="row">
-                        
-
-                         <!-- Endereço -->
-                         <div class="col-md-4 mb-3">
-                            <label for="endereco" class="form-label">Endereço</label>
-                            <input type="text" class="form-control" id="endereco" name="endereco" required>
-                        </div>
-
-                        <!-- Bairro -->
-                        <div class="col-md-4 mb-3">
-                            <label for="bairro" class="form-label">Bairro</label>
-                            <select class="form-control" id="bairro" name="bairro" required>
-                                <option value="">Selecione o Bairro</option>
-                                <!-- Add options dynamically -->
+    <!-- Modal de Consulta Pública -->
+    <div class="modal fade" id="consultaPublicaModal" tabindex="-1" aria-labelledby="consultaPublicaModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="consultaPublicaModalLabel">Consulta Pública: Opinião sobre Regimento Escolar Unificado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="consultaPublicaForm" method="POST" action="{% url 'consulta_publica' %}">
+                        {% csrf_token %}
+                        <!-- Campo para escolher o Título -->
+                        <div class="mb-3">
+                            <label for="titulo" class="form-label">Escolha o TÍTULO:</label>
+                            <select class="form-select" id="titulo" name="titulo" required>
+                                <option value="" disabled selected>Selecione o TÍTULO</option>
+                                <option value="inserir-titulo">INSERIR TÍTULO</option>
+                                <option value="TÍTULO I">TÍTULO I - DAS DISPOSIÇÕES PRELIMINARES</option>
+                                <option value="TÍTULO II">TÍTULO II - DAS FINALIDADES E OBJETIVOS DA EDUCAÇÃO BÁSICA</option>
+                                <option value="TÍTULO III">TÍTULO III - DA ORGANIZAÇÃO DA INSTITUIÇÃO</option>
+                                <option value="TÍTULO IV">TÍTULO IV - DOS PAIS OU RESPONSÁVEIS</option>
+                                <option value="TÍTULO V">TÍTULO V - DAS DEMAIS ORGANIZAÇÃO DA INSTITUIÇÃO</option>
+                                <option value="TÍTULO VI">TÍTULO VI - DA ADMINISTRAÇÃO PESSOAL</option>
+                                <option value="TÍTULO VII">TÍTULO VII - DA ORGANIZAÇÃO DIDÁTICA - PEDAGÓGICA</option>
+                                <option value="TÍTULO VIII">TÍTULO VIII - DO REGIME DE FUNCIONAMENTO</option>
+                                <option value="TÍTULO IX">TÍTULO IX - DA VERIFICAÇÃO DO RENDIMENTO E AVALIAÇÃO</option>
+                                <option value="TÍTULO X">TÍTULO X - DO REGIME DISCIPLINAR</option>
+                                <option value="TÍTULO XI">TÍTULO XI - DAS DISPOSIÇÕES GERAIS E TRANSITÓRIAS</option>
                             </select>
                         </div>
 
 
-                        <div class="col-md-4 mb-3">
-                            <label for="fez_exame_supletivo" class="form-label">Já fez a prova do exame supletivo?</label><br>
-                            <div class="form-check form-check-inline">
-                                <input type="radio" id="fez_exame_sim" name="fez_exame_supletivo" value="Sim" class="form-check-input" required>
-                                <label for="fez_exame_sim" class="form-check-label">Sim</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input type="radio" id="fez_exame_nao" name="fez_exame_supletivo" value="Não" class="form-check-input" required>
-                                <label for="fez_exame_nao" class="form-check-label">Não</label>
-                            </div>
-                        </div>
-
-
-
-                    </div>
-
-                    <!-- ****************************************************************************************************************************** -->
-
-                    <div class="row">
-
-                        <!-- Prova de todas disciplinas -->
-                        <div class="col-md-4 mb-3">
-                            <label for="prova_todas_disciplinas" class="form-label">Deseja realizar a prova de todas as disciplinas?</label><br>
-                            <div class="form-check form-check-inline">
-                                <input type="radio" id="prova_todas_disciplinas_sim" name="prova_todas_disciplinas" value="Sim" class="form-check-input" onchange="toggleDisciplinas(false)" required>
-                                <label for="prova_todas_disciplinas_sim" class="form-check-label">Sim</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input type="radio" id="prova_todas_disciplinas_nao" name="prova_todas_disciplinas" value="Não" class="form-check-input" onchange="toggleDisciplinas(true)" required>
-                                <label for="prova_todas_disciplinas_nao" class="form-check-label">Não</label>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4 mb-3">
-                            <label for="disciplinas" class="form-label">Qual(is) disciplina(s) deseja realizar a prova</label>
-                            <div id="disciplinas" style="height: auto; overflow: visible;">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="matematica" name="disciplinas[]" value="Matemática" disabled>
-                                            <label class="form-check-label" for="matematica">Matemática</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="ciencias" name="disciplinas[]" value="Ciências" disabled>
-                                            <label class="form-check-label" for="ciencias">Ciências</label>
-                                        </div>
-                                    </div>
-                                </div>
-                        
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="arte" name="disciplinas[]" value="Arte" disabled>
-                                            <label class="form-check-label" for="arte">Arte</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="educacao_fisica" name="disciplinas[]" value="Educação Física" disabled>
-                                            <label class="form-check-label" for="educacao_fisica">Educação Física</label>
-                                        </div>
-                                    </div>
-                                </div>
-                        
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="historia" name="disciplinas[]" value="História" disabled>
-                                            <label class="form-check-label" for="historia">História</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="geografia" name="disciplinas[]" value="Geografia" disabled>
-                                            <label class="form-check-label" for="geografia">Geografia</label>
-                                        </div>
-                                    </div>
-                                </div>
-                        
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="lingua_portuguesa" name="disciplinas[]" value="Língua Portuguesa" disabled>
-                                            <label class="form-check-label" for="lingua_portuguesa">Língua Portuguesa</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="ingles" name="disciplinas[]" value="Inglês" disabled>
-                                            <label class="form-check-label" for="ingles">Inglês</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4 mb-3">
-                            <label for="necessidade_especial" class="form-label">Possui necessidade especial?</label><br>
-                            <div class="form-check form-check-inline">
-                                <input type="radio" id="necessidade_especial_sim" name="possui_necessidade_especial"
-                                    value="Sim" class="form-check-input" required onchange="toggleSpecialNeeds(true)">
-                                <label for="necessidade_especial_sim" class="form-check-label">Sim</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input type="radio" id="necessidade_especial_nao" name="possui_necessidade_especial"
-                                    value="Não" class="form-check-input" checked onchange="toggleSpecialNeeds(false)">
-                                <label for="necessidade_especial_nao" class="form-check-label">Não</label>
-                            </div>
-                        </div>
-
-                    </div>
-                    <!-- ****************************************************************************************************************************** -->
-
-                    <div class="row">
-
-                    
-                    
-                        <div class="col-md-4 mb-3">
-                            <label for="necessidade_especial_detalhe" class="form-label">Caso possua, favor
-                                assinalar</label>
-                            <select class="form-select" id="necessidade_especial_detalhe"
-                                name="necessidade_especial_detalhe" disabled>
-                                <option value="">Selecione...</option>
-                                <option value="Baixa Visão">Baixa Visão</option>
-                                <option value="Cegueira">Cegueira</option>
-                                <option value="Auditiva">Deficiência Auditiva</option>
-                                <option value="Deficiência Física">Deficiência Física</option>
-                                <option value="Deficiência Intelectual">Deficiência Intelectual</option>
-                                <option value="Surdez">Surdez</option>
-                                <option value="Surdocegueira">Surdocegueira</option>
-                                <option value="Transtorno do espectro autista">Transtorno do espectro autista</option>
-                                <option value="Altas habilidades/superdotação">Altas habilidades/superdotação</option>
-                                <option value="Outras">Outras</option>
+                        <!-- Campo para escolher o Capítulo -->
+                        <div class="mb-3">
+                            <label for="capitulo" class="form-label">Escolha o CAPÍTULO:</label>
+                            <select class="form-select" id="capitulo" name="capitulo" required>
+                                <option value="" disabled selected>Selecione o CAPÍTULO</option>
                             </select>
                         </div>
-                    
-                        <!-- <div class="col-md-4 mb-3">
-                            <label for="turno_disponivel" class="form-label">Qual turno pretende estudar?</label><br>
-                            <div class="form-check form-check-inline">
-                                <input type="radio" id="manha" name="turno_disponivel" value="Manhã" required>
-                                <label for="manha" class="form-check-label">Manhã</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input type="radio" id="tarde" name="turno_disponivel" value="Tarde" required>
-                                <label for="tarde" class="form-check-label">Tarde</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input type="radio" id="noite" name="turno_disponivel" value="Noite" required>
-                                <label for="noite" class="form-check-label">Noite</label>
-                            </div>
-                        </div> -->
 
-                        <!-- Senha -->
-                        <div class="col-md-4 mb-3">
-                            <label for="senha" class="form-label">Senha</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="senha" name="senha" required>
-                                <div class="input-group-append">
-                                    <span class="input-group-text" style="cursor: pointer;" onclick="togglePassword('senha', 'eyeSenha')">
-                                        <i id="eyeSenha" class="fas fa-eye" style="font-size: 1.5em;"></i>
-                                    </span>
-                                </div>
-                            </div>
+
+                        <!-- Outros campos já existentes -->
+                        <div class="mb-3">
+                            <label for="tipoAlteracao" class="form-label">Escolha o tipo de alteração:</label>
+                            <select class="form-select" id="tipo_alteracao" name="tipo_alteracao" required>
+                                <option value="" disabled selected>Selecione uma opção</option>
+                                <option value="supressao">Supressão</option>
+                                <option value="insercao">Inserção</option>
+                                <option value="edicao">Alteração</option>
+                                <option value="exclusao">Exclusão</option>
+                            </select>
                         </div>
-                        
-                        <!-- Confirmar Senha -->
-                        <div class="col-md-4 mb-3">
-                            <label for="confirmar_senha" class="form-label">Confirmar Senha</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="confirmar_senha" name="confirmar_senha" required>
-                                <div class="input-group-append">
-                                    <span class="input-group-text" style="cursor: pointer;" onclick="togglePassword('confirmar_senha', 'eyeConfirmarSenha')">
-                                        <i id="eyeConfirmarSenha" class="fas fa-eye" style="font-size: 1.5em;"></i>
-                                    </span>
-                                </div>
-                            </div>
+
+
+                        <div class="mb-3">
+                            <label for="justificativa" class="form-label">Justificativa:</label>
+                            <textarea class="form-control" id="justificativa" name="justificativa" rows="4"
+                                placeholder="Explique por que você está sugerindo essa alteração..."
+                                required></textarea>
                         </div>
-                   <hr>
+
+
+                        <!-- Dados Pessoais -->
+                        <h6>Dados Pessoais</h6>
                         <div class="row">
-                            <h5 class="text-primary">Informações sobre a Prova</h5>
-                        
-                            <!-- Local de Realização da Prova -->
-                            <div class="col-md-4 mb-3">
-                                <label for="local_prova" class="form-label">Em qual local deseja realizar as provas?*</label>
-                                <select class="form-control" id="local_prova" name="local_prova" required>
-                                    <option value="CMEJA Jose de Deus Andrade">CMEJA Jose de Deus Andrade</option>
-                                    <option value="EMEF Sebastião Agripino da Silva">EMEF Sebastião Agripino da Silva</option>
-                                    <option value="EMEF Maria de Lourdes Rocha Rodrigues">EMEF Maria de Lourdes Rocha Rodrigues</option>
-                                    <option value="EMEIF Adelaide Molinari">EMEIF Adelaide Molinari</option>
-                                    <option value="EMEIF Raimundo de Oliveira">EMEIF Raimundo de Oliveira</option>
-                                    <option value="EMEIF Teotonio Vilela">EMEIF Teotonio Vilela</option>
-                                    <option value="EMEB Gercino Correa de Melo Junior">EMEB Gercino Correa de Melo Junior</option>
-                                    <!-- Add other options here -->
+                            <div class="col-md-6 mb-3">
+                                <label for="nomeCompleto" class="form-label">Nome Completo:</label>
+                                <input type="text" class="form-control" id="nome_completo" name="nome_completo" placeholder="Digite seu nome completo">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">E-mail:</label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Digite seu e-mail">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="cpf" class="form-label">CPF:</label>
+                                <input type="text" class="form-control" id="cpf" name="cpf" placeholder="Digite seu CPF" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="telefone" class="form-label">Telefone:</label>
+                                <input type="text" class="form-control" id="telefone" name="telefone" placeholder="Digite seu telefone">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="cargo" class="form-label">Cargo:</label>
+                                <select class="form-select" id="cargo" name="cargo" required>
+                                    <option value="" disabled selected>Selecione o Cargo</option>
+                                    <option value="ALUNO">ALUNO</option>
+                                    <option value="ADMINISTRADOR - PCCR/QP">ADMINISTRADOR - PCCR/QP</option>
+                                    <option value="ADVOGADO - PCCR/QP">ADVOGADO - PCCR/QP</option>
+                                    <option value="AG. SERV. MONITOR ESCOLAR">AG. SERV. MONITOR ESCOLAR</option>
+                                    <option value="AG. SERV. TRANSPORTE ESCOLAR">AG. SERV. TRANSPORTE ESCOLAR</option>
+                                    <option value="AGENTE ADMINISTRATIVO EDUCACIONAL">AGENTE ADMINISTRATIVO EDUCACIONAL</option>
+                                    <option value="AGENTE DE SERVIÇOS ADMINISTRATIVOS">AGENTE DE SERVIÇOS ADMINISTRATIVOS</option>
+                                    <option value="AGENTE DE SERVIÇOS ADMINISTRATIVOS - PCCR/QP">AGENTE DE SERVIÇOS ADMINISTRATIVOS - PCCR/QP</option>
+                                    <option value="AGENTE DE SERVIÇOS DE AUXILIAR DE SALA - PCCR/QP">AGENTE DE SERVIÇOS DE AUXILIAR DE SALA - PCCR/QP</option>
+                                    <option value="AGENTE DE SERVIÇOS DE BIBLIOTECA ESCOLAR - PCCR/QP">AGENTE DE SERVIÇOS DE BIBLIOTECA ESCOLAR - PCCR/QP</option>
+                                    <option value="AGENTE DE SERVIÇOS DE CONDUTOR DE TRANSPORTE ESCOLAR - PCCR/QP">AGENTE DE SERVIÇOS DE CONDUTOR DE TRANSPORTE ESCOLAR - PCCR/QP</option>
+                                    <option value="AGENTE DE SERVIÇOS DE CONDUTOR VEICULOS LEVES - PCCR/QP">AGENTE DE SERVIÇOS DE CONDUTOR VEICULOS LEVES - PCCR/QP</option>
+                                    <option value="AGENTE DE SERVIÇOS DE COZINHEIRO ESCOLAR - PCCR/QP">AGENTE DE SERVIÇOS DE COZINHEIRO ESCOLAR - PCCR/QP</option>
+                                    <option value="AGENTE DE SERVIÇOS DE INFORMÁTICA - PCCR/QP">AGENTE DE SERVIÇOS DE INFORMÁTICA - PCCR/QP</option>
+                                    <option value="AGENTE DE SERVIÇOS DE MONITOR ESCOLAR - PCCR/QP">AGENTE DE SERVIÇOS DE MONITOR ESCOLAR - PCCR/QP</option>
+                                    <option value="AGENTE DE SERVIÇOS DE SEGURANÇA PATRIMONIAL - PCCR/QP">AGENTE DE SERVIÇOS DE SEGURANÇA PATRIMONIAL - PCCR/QP</option>
+                                    <option value="AGENTE DE SERVIÇOS GERAIS - PCCR/QP">AGENTE DE SERVIÇOS GERAIS - PCCR/QP</option>
+                                    <option value="ANALISTA DE SISTEMAS DE INFORMAÇÃO - PCCR/QP">ANALISTA DE SISTEMAS DE INFORMAÇÃO - PCCR/QP</option>
+                                    <option value="APOIO ESCOLAR / KSS">APOIO ESCOLAR / KSS</option>
+                                    <option value="APOIO PEDAGÓGICO">APOIO PEDAGÓGICO</option>
+                                    <option value="ASSESSOR DE COMUNICAÇÃO - PCCR/QC">ASSESSOR DE COMUNICAÇÃO - PCCR/QC</option>
+                                    <option value="ASSESSOR I - PCCR/QC">ASSESSOR I - PCCR/QC</option>
+                                    <option value="ASSESSOR IX - PCCR/QC">ASSESSOR IX - PCCR/QC</option>
+                                    <option value="ASSISTENTE SOCIAL - PCCR/QP">ASSISTENTE SOCIAL - PCCR/QP</option>
+                                    <option value="AUXILIAR ADMINISTRATIVO">AUXILIAR ADMINISTRATIVO</option>
+                                    <option value="AUXILIAR DE SERVIÇOS GERAIS">AUXILIAR DE SERVIÇOS GERAIS</option>
+                                    <option value="BIBLIOTECÁRIA(O) - PCCR/QP">BIBLIOTECÁRIA(O) - PCCR/QP</option>
+                                    <option value="CONTADOR(A) - PCCR/QP">CONTADOR(A) - PCCR/QP</option>
+                                    <option value="COORDENADOR TECNICO PEDAGOGICO">COORDENADOR TECNICO PEDAGOGICO</option>
+                                    <option value="COORDENADOR TECNICO PEDAGOGICO - PCCR-QC">COORDENADOR TECNICO PEDAGOGICO - PCCR-QC</option>
+                                    <option value="COORDENADOR(A) PEDAGOGICO">COORDENADOR(A) PEDAGOGICO</option>
+                                    <option value="COORDENADOR(A) PEDAGÓGICO ED. INFANTIL">COORDENADOR(A) PEDAGÓGICO ED. INFANTIL</option>
+                                    <option value="COORDENADOR(A) PEDAGÓGICO(A) - PCCR/QC">COORDENADOR(A) PEDAGÓGICO(A) - PCCR/QC</option>
+                                    <option value="COORDENADOR(A) TÉCNICO - PCCR/QC">COORDENADOR(A) TÉCNICO - PCCR/QC</option>
+                                    <option value="DIRETOR(A) ESCOLAR">DIRETOR(A) ESCOLAR</option>
+                                    <option value="ENGENHEIRO CIVIL - PCCR/QP">ENGENHEIRO CIVIL - PCCR/QP</option>
+                                    <option value="GESTOR COORDENADOR - SUPERIOR - PCCR/QC">GESTOR COORDENADOR - SUPERIOR - PCCR/QC</option>
+                                    <option value="GESTOR DE DIRETORIA - PCCR/QFG">GESTOR DE DIRETORIA - PCCR/QFG</option>
+                                    <option value="GESTOR DE SETOR - MÉDIO - PCCR/QC">GESTOR DE SETOR - MÉDIO - PCCR/QC</option>
+                                    <option value="GESTOR DE SETOR - SUPERIOR - PCCR/QC">GESTOR DE SETOR - SUPERIOR - PCCR/QC</option>
+                                    <option value="MEDIADOR DE APRENDIZAGEM / KSS">MEDIADOR DE APRENDIZAGEM / KSS</option>
+                                    <option value="MONITOR DE ESCOLA DE TEMPO INTEGRAL / KSS">MONITOR DE ESCOLA DE TEMPO INTEGRAL / KSS</option>
+                                    <option value="NUTRICIONISTA - PCCR/QP">NUTRICIONISTA - PCCR/QP</option>
+                                    <option value="ORIENTADOR EDUCACIONAL">ORIENTADOR EDUCACIONAL</option>
+                                    <option value="OUTROS">OUTROS</option>
+                                    <option value="PEDAGOGO(A) - PCCR/QP">PEDAGOGO(A) - PCCR/QP</option>
+                                    <option value="PROFESSOR CIENCIAS">PROFESSOR CIENCIAS</option>
+                                    <option value="PROFESSOR DE ARTES - PCCR/QP">PROFESSOR DE ARTES - PCCR/QP</option>
+                                    <option value="PROFESSOR DE CIÊNCIAS NATURAIS - PCCR/QP">PROFESSOR DE CIÊNCIAS NATURAIS - PCCR/QP</option>
+                                    <option value="PROFESSOR DE EDUCAÇÃO BASICA - PCCR/QP">PROFESSOR DE EDUCAÇÃO BASICA - PCCR/QP</option>
+                                    <option value="PROFESSOR DE EDUCAÇÃO DO CAMPO - PCCR/QP">PROFESSOR DE EDUCAÇÃO DO CAMPO - PCCR/QP</option>
+                                    <option value="PROFESSOR DE EDUCAÇÃO ESPECIAL - PCCR/QP">PROFESSOR DE EDUCAÇÃO ESPECIAL - PCCR/QP</option>
+                                    <option value="PROFESSOR DE EDUCAÇÃO FISICA - PCCR/QP">PROFESSOR DE EDUCAÇÃO FISICA - PCCR/QP</option>
+                                    <option value="PROFESSOR DE EDUCAÇÃO INFANTIL - PCCR/QP">PROFESSOR DE EDUCAÇÃO INFANTIL - PCCR/QP</option>
+                                    <option value="PROFESSOR DE GEOGRAFIA - PCCR/QP">PROFESSOR DE GEOGRAFIA - PCCR/QP</option>
+                                    <option value="PROFESSOR DE HISTÓRIA - PCCR/QP">PROFESSOR DE HISTÓRIA - PCCR/QP</option>
+                                    <option value="PROFESSOR DE INGLÊS - PCCR/QP">PROFESSOR DE INGLÊS - PCCR/QP</option>
+                                    <option value="PROFESSOR DE LINGUA PORTUGUESA - PCCR/QP">PROFESSOR DE LINGUA PORTUGUESA - PCCR/QP</option>
+                                    <option value="PROFESSOR DE MATEMATICA - PCCR/QP">PROFESSOR DE MATEMATICA - PCCR/QP</option>
+                                    <option value="PROFESSOR ENSINO RELIGIOSO - PCCR/QP">PROFESSOR ENSINO RELIGIOSO - PCCR/QP</option>
+                                    <option value="PROFESSOR MAGISTÉRIO / 1º AO 5º ANO">PROFESSOR MAGISTÉRIO / 1º AO 5º ANO</option>
+                                    <option value="PROFESSOR(A)">PROFESSOR(A)</option>
+                                    <option value="PSICOLOGO ESCOLAR/EDUCACIONAL - PCCR/QP">PSICOLOGO ESCOLAR/EDUCACIONAL - PCCR/QP</option>
+                                    <option value="PSICOPEDAGOGO(A) - PCCR/QP">PSICOPEDAGOGO(A) - PCCR/QP</option>
+                                    <option value="SECRETARIO NÃO ESCOLAR - PCCR/QC">SECRETARIO NÃO ESCOLAR - PCCR/QC</option>
+                                    <option value="SECRETÁRIO(A) ESCOLAR">SECRETÁRIO(A) ESCOLAR</option>
+                                    <option value="SECRETÁRIO(A) GERAL">SECRETÁRIO(A) GERAL</option>
+                                    <option value="VICE DIRETOR(A) DE ESCOLA - PCCR/QC">VICE DIRETOR(A) DE ESCOLA - PCCR/QC</option>
                                 </select>
                             </div>
-                        
-                            <div class="col-md-4 mb-3">
-                                <label for="data_prova" class="form-label">Data de realização da Prova*</label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="data_prova_checkbox" name="data_prova_checkbox" checked disabled>
-                                    <label class="form-check-label" for="data_prova_checkbox">01/12/2024</label>
-                                </div>
-                            </div>
+
+
                             
-                            <!-- Nome da Escola (Se Estudando) -->
-                            <div class="col-md-4 mb-3">
-                                <label for="escola_2024" class="form-label">Caso esteja matriculado em 2024, qual escola*</label>
-                                <select class="form-control" id="escola_2024" name="escola_2024" required>
-                                    <option value="NÃO ESTOU ESTUDANDO EM 2024">NÃO ESTOU ESTUDANDO EM 2024</option>
+                            <div class="col-md-6 mb-3">
+                                <label for="lotacao" class="form-label">Lotação:</label>
+                                <select class="form-select" id="lotacao" name="lotacao" required>
+                                    <option value="" disabled selected>Selecione a Lotação</option>
+                                    <option value="CENTRO DE FORMACAO RUTE SAMPAIO DA CUNHA">CENTRO DE FORMACAO RUTE SAMPAIO DA CUNHA</option>
                                     <option value="CMEJA JOSÉ DE DEUS ANDRADE">CMEJA JOSÉ DE DEUS ANDRADE</option>
+                                    <option value="EMEB GERCINO CORREA DE MELO JUNIOR">EMEB GERCINO CORREA DE MELO JUNIOR</option>
+                                    <option value="EMEB LUÍS CARLOS PRESTES">EMEB LUÍS CARLOS PRESTES</option>
+                                    <option value="EMEB RONILTON ARIDAL DA SILVA GRILO">EMEB RONILTON ARIDAL DA SILVA GRILO</option>
+                                    <option value="EMEF ALEXSANDRO NUNES DE SOUZA GOMES">EMEF ALEXSANDRO NUNES DE SOUZA GOMES</option>
+                                    <option value="EMEF BENEDITA TORRES">EMEF BENEDITA TORRES</option>
+                                    <option value="EMEF CARMELO MENDES DA SILVA">EMEF CARMELO MENDES DA SILVA</option>
+                                    <option value="EMEF FRANCISCA ROMANA DOS SANTOS">EMEF FRANCISCA ROMANA DOS SANTOS</option>
+                                    <option value="EMEF JOÃO NELSON DOS PRAZERES HENRIQUES">EMEF JOÃO NELSON DOS PRAZERES HENRIQUES</option>
+                                    <option value="EMEF MARIA DE LOURDES ROCHA RODRIGUES">EMEF MARIA DE LOURDES ROCHA RODRIGUES</option>
+                                    <option value="EMEF SEBASTIÃO AGRIPINO DA SILVA">EMEF SEBASTIÃO AGRIPINO DA SILVA</option>
                                     <option value="EMEIF ADELAIDE MOLINARI">EMEIF ADELAIDE MOLINARI</option>
                                     <option value="EMEIF CARLOS HENRIQUE">EMEIF CARLOS HENRIQUE</option>
                                     <option value="EMEIF JUSCELINO KUBITSCHEK">EMEIF JUSCELINO KUBITSCHEK</option>
                                     <option value="EMEIF MAGALHÃES BARATA">EMEIF MAGALHÃES BARATA</option>
                                     <option value="EMEIF RAIMUNDO DE OLIVEIRA">EMEIF RAIMUNDO DE OLIVEIRA</option>
-                                    <option value="EMEIF TEOTÔNIO VILELA">EMEIF TEOTÔNIO VILELA</option>
-                                    <option value="EMEF BENEDITA TORRES">EMEF BENEDITA TORRES</option>
-                                    <option value="EMEF SEBASTIÃO AGRIPINO DA SILVA">EMEF SEBASTIÃO AGRIPINO DA SILVA</option>
-                                    <option value="EMEF ALEXSANDRO NUNES DE SOUZA GOMES">EMEF ALEXSANDRO NUNES DE SOUZA GOMES</option>
-                                    <option value="EMEF CARMELO MENDES DA SILVA">EMEF CARMELO MENDES DA SILVA</option>
-                                    <option value="EMEB LUÍS CARLOS PRESTES">EMEB LUÍS CARLOS PRESTES</option>
-                                    <option value="EMEF JOÃO NELSON DOS PRAZERES HENRIQUES">EMEF JOÃO NELSON DOS PRAZERES HENRIQUES</option>
-                                    <option value="EMEF MARIA DE LOURDES ROCHA RODRIGUES">EMEF MARIA DE LOURDES ROCHA RODRIGUES</option>
-                                    <option value="EMEB RONILTON ARIDAL DA SILVA GRILO">EMEB RONILTON ARIDAL DA SILVA GRILO</option>
-                                    <option value="EMEB GERCINO CORREA">EMEB GERCINO CORREA</option>
                                     <option value="EMEIF TANCREDO DE ALMEIDA NEVES">EMEIF TANCREDO DE ALMEIDA NEVES</option>
-                                    <option value="EMEIF FRANCISCA ROMANA">EMEIF FRANCISCA ROMANA</option>
-                                    <!-- Add more options here -->
+                                    <option value="EMEIF TEOTÔNIO VILELA">EMEIF TEOTÔNIO VILELA</option>
+                                    <option value="ESPACO MAKER MUNICIPAL PROFESSOR GRAZIANNE J. M. DE ALMEIDA">ESPACO MAKER MUNICIPAL PROFESSOR GRAZIANNE J. M. DE ALMEIDA</option>
+                                    <option value="NEI ALEGRIA DO SABER">NEI ALEGRIA DO SABER</option>
+                                    <option value="NEI BENEDITO FAUSTINO MALACHIAS">NEI BENEDITO FAUSTINO MALACHIAS</option>
+                                    <option value="NEI EDSON PEDRO DA SILVA">NEI EDSON PEDRO DA SILVA</option>
+                                    <option value="NEI IRANI VIEIRA DA SILVA">NEI IRANI VIEIRA DA SILVA</option>
+                                    <option value="NEI MARIA DOS MILAGRES OLIVEIRA VIANA">NEI MARIA DOS MILAGRES OLIVEIRA VIANA</option>
+                                    <option value="NEI RAIMUNDO BORGES DE SOUSA">NEI RAIMUNDO BORGES DE SOUSA</option>
+                                    <option value="SEMED">SEMED</option>
+                                    <option value="OUTRO">OUTRO</option>
                                 </select>
                             </div>
                         </div>
-                    </div>
-                    <!-- ****************************************************************************************************************************** -->
 
-                    <div class="row">
-                        <!-- Senha -->
-                        <!-- <div class="col-md-4 mb-3">
-                            <label for="senha" class="form-label">Senha</label>
-                            <input type="password" class="form-control" id="senha" name="senha" required>
-                        </div> -->
 
-                        <!-- Confirmar Senha -->
-                        <!-- <div class="col-md-4 mb-3">
-                            <label for="confirmar_senha" class="form-label">Confirmar Senha</label>
-                            <input type="password" class="form-control" id="confirmar_senha" name="confirmar_senha" required>
-                        </div> -->
-                    </div>
-                    <!-- ****************************************************************************************************************************** -->
-                    <hr>
-                    <div class="row">
-                        <div class="col-md-12 mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="termos_condicoes" name="termos_condicoes" required>
-                                <label class="form-check-label" for="termos_condicoes" style="font-weight: bold; color: #90aff0; font-size: 0.8rem; text-align: justify;">
-                                    Eu li e aceito os 
-                                    <a href="{% static 'downloads/edital.pdf' %}" target="_blank" style="text-decoration: underline; font-weight: bold;">
-                                        <b>TERMOS e CONDIÇÕES</b>
-                                    </a>
-                                    deste Edital, incluindo as diretrizes para o exame de Suplência 2024, a data programada para 
-                                    <strong>1º de dezembro de 2024</strong>, o horário de início às <strong>7h30</strong> e o formato 
-                                    <strong>presencial</strong> do exame.
-                                </label>
-                                
-                            </div>
+
+                        <div class="mb-3">
+                            <label for="observacoes" class="form-label">Observações Adicionais:</label>
+                            <textarea class="form-control" id="observacoes_adicionais" name="observacoes_adicionais"  rows="3"
+                                placeholder="Se houver mais detalhes, adicione aqui..."></textarea>
                         </div>
-                    </div>
-                    <!-- ****************************************************************************************************************************** -->
-                <hr>
-                    <button type="submit" id="submitButton" class="btn btn-primary w-20" disabled>Cadastrar</button>
-                    <button type="button" class="btn btn-secondary" id="fecharBtn" data-bs-dismiss="modal" onclick="location.reload()">Fechar</button>
 
+                    </form>
                 </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-<!-- Three modern cards for links -->
-<div class="container mt-5">
-    <div class="row">
-        <!-- Card for Edital Download -->
-        <div class="col-md-4">
-            <div class="modern-card">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Baixar Edital</h5>
-                    <p class="card-text">Download do edital para o processo seletivo.</p>
-                    <a href="{% static 'downloads/edital.pdf' %}" class="btn-modern" target="_blank"><b>Baixar Edital</b></a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Card for Exam Content Download -->
-        <div class="col-md-4">
-            <div class="modern-card">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Baixar Conteúdo</h5>
-                    <p class="card-text">Baixe o conteúdo programático para a prova.</p>
-                    <a href="{% static 'downloads/conteudo.pdf' %}" class="btn-modern" target="_blank"><b>Baixar Conteúdo</b></a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Card for Registration Form Print -->
-        <div class="col-md-4">
-            <div class="modern-card">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Imprimir Ficha de Inscrição</h5>
-                    <p class="card-text">Ficha de inscrição para o processo seletivo.</p>
-                    <a href="{% url 'login' %}" class="btn-modern"><b>Imprimir Ficha</b></a>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" form="consultaPublicaForm">Enviar Opinião</button>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 
-
-
-
-
-    <!-- Seção de Histórias de Sucesso -->
-    <section class="testimonials-section py-5 bg-light">
-        <!-- <div class="container">
-            <h2 class="text-center mb-5">Histórias de Sucesso</h2>
-            <div class="row"> -->
-                <!-- Testimonial 1 -->
-                <!-- <div class="col-md-4">
-                    <div class="card h-100 shadow-sm">
-                        <img src="{% static 'img/educa1.jpeg' %}" class="card-img-top" alt="Maria Silva"
-                            style="width: 415px; height: 319px;">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">Semed - Aprendizagem</h5>
-                            <p class="card-text">
-                                "Plano para recomposição da aprendizagem" APROVADO."
-                            </p>
-                            <footer class="blockquote-footer" style="color: white;">Plano de Intervenção Pedagógica
-                                (PIP)</footer>
-                        </div>
-                    </div>
-                </div> -->
-
-                <!-- Testimonial 2 -->
-                <!-- <div class="col-md-4">
-                    <div class="card h-100 shadow-sm">
-                        <img src="{% static 'img/educa2.jpg' %}" class="card-img-top" alt="João Souza">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">Semed - Aulas</h5>
-                            <p class="card-text">
-                                "Volta às aulas – Prefeita e secretário de Educação."
-                            </p>
-                            <footer class="blockquote-footer" style="color: white;">Boas-vindas a alunos em Canaã dos
-                                Carajás</footer>
-                        </div>
-                    </div>
-                </div> -->
-
-                <!-- Testimonial 3 -->
-                <!-- <div class="col-md-4">
-                    <div class="card h-100 shadow-sm">
-                        <img src="{% static 'img/educa3.jpeg' %}" class="card-img-top" alt="Carlos Oliveira"
-                            style="width: 415px; height: 319px;">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">Semed - Infraestrutura</h5>
-                            <p class="card-text">
-                                "Nova escola de ensino fundamental."
-                            </p>
-                            <footer class="blockquote-footer" style="color: white;">Atenderá a cerca de 980 alunos da
-                                rede pública</footer>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
-
-
-            <!-- Widgets Section -->
-            <!-- <div class="row mt-5">
-                <div class="col-md-6"> -->
-                    <!-- Widget for Stats -->
-                    <!-- <div class="card h-100 text-center shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Estudantes Matriculados na Rede</h5>
-                            <p class="card-text display-4">17.923</p>
-                            <p>Alunos matriculados em escolas de Canaã dos Carajás.</p>
-                        </div>
-                    </div>
-                </div> -->
-
-                <!-- <div class="col-md-6"> -->
-                    <!-- Widget for Student Progress -->
-                    <!-- <div class="card h-100 text-center shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Taxa de Sucesso</h5>
-                            <p class="card-text display-4">98%</p>
-                            <p>Dos nossos estudantes conseguem concluir e alcançar seus objetivos.</p>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
-
-
-            <!-- Tabela de Resultados do IDEB -->
-            <!-- <section class="table-container">
-                <div class="container">
-                    <h2 class="text-center">Resultados do IDEB(Índice de Desenvolvimento da Educação Básica)</h2>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Ano</th>
-                                    <th>IDEB (Iniciais)</th>
-                                    <th>IDEB (Finais)</th>
-                                    <th>Meta Projeção</th>
-                                    <th>Resultado Obtido</th> -->
-                                    <!-- <th>Análise Gráfica</th> -->
-                                <!-- </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>2015</td>
-                                    <td>4.5</td>
-                                    <td>-</td>
-                                    <td>4.7</td>
-                                    <td>4.5</td>
-                                </tr>
-                                <tr>
-                                    <td>2017</td>
-                                    <td>4.8</td>
-                                    <td>4.0</td>
-                                    <td>5.0</td>
-                                    <td>4.8</td>
-                                </tr>
-                                <tr>
-                                    <td>2019</td>
-                                    <td>5.1</td>
-                                    <td>4.2</td>
-                                    <td>5.2</td>
-                                    <td>5.1</td>
-                                </tr>
-                                <tr>
-                                    <td>2021</td>
-                                    <td>5.4</td>
-                                    <td>4.3</td>
-                                    <td>5.5</td>
-                                    <td>5.4</td>
-                                </tr>
-                                <tr>
-                                    <td>2023</td>
-                                    <td>5.2</td>
-                                    <td>4.4</td>
-                                    <td>5.6</td>
-                                    <td>5.2 (iniciais), 4.4 (finais)</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section> -->
-
-
-            <!-- Tabela de Resultados do IPS Brasil - Educação -->
-            <!-- <section class="table-container">
-                <div class="container">
-                    <h2 class="text-center">Resultados do IPS(Índice de Progresso Social) Brasil</h2>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Ano</th>
-                                    <th>Acesso à Educação</th>
-                                    <th>Qualidade da Educação</th>
-                                    <th>Ensino Fundamental</th>
-                                    <th>Educação</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>2015</td>
-                                    <td>5.0</td>
-                                    <td>4.5</td>
-                                    <td>65%</td>
-                                    <td>60.3</td>
-                                </tr>
-                                <tr>
-                                    <td>2017</td>
-                                    <td>5.3</td>
-                                    <td>4.8</td>
-                                    <td>68%</td>
-                                    <td>62.5</td>
-                                </tr>
-                                <tr>
-                                    <td>2019</td>
-                                    <td>5.5</td>
-                                    <td>5.0</td>
-                                    <td>70%</td>
-                                    <td>64.1</td>
-                                </tr>
-                                <tr>
-                                    <td>2021</td>
-                                    <td>5.8</td>
-                                    <td>5.3</td>
-                                    <td>73%</td>
-                                    <td>66.0</td>
-                                </tr>
-                                <tr>
-                                    <td>2023</td>
-                                    <td>6.0</td>
-                                    <td>5.5</td>
-                                    <td>75%</td>
-                                    <td>67.8</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section> -->
-
-            <!-- Tabela de Resultados do IDH (em Percentual) - Canaã dos Carajás (2015 - 2023) -->
-            <!-- <section class="table-container">
-                <div class="container">
-                    <h2 class="text-center">Resultados do IDH(Índice de Desenvolvimento Humano)</h2>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Ano</th>
-                                    <th>Longevidade (%)</th>
-                                    <th>Educação (%)</th>
-                                    <th>Renda (%)</th>
-                                    <th>IDH Geral (%)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>2015</td>
-                                    <td>77.9%</td>
-                                    <td>63.5%</td>
-                                    <td>68.4%</td>
-                                    <td>69.8%</td>
-                                </tr>
-                                <tr>
-                                    <td>2016</td>
-                                    <td>78.2%</td>
-                                    <td>64.0%</td>
-                                    <td>69.0%</td>
-                                    <td>70.1%</td>
-                                </tr>
-                                <tr>
-                                    <td>2017</td>
-                                    <td>78.5%</td>
-                                    <td>64.5%</td>
-                                    <td>69.5%</td>
-                                    <td>70.4%</td>
-                                </tr>
-                                <tr>
-                                    <td>2018</td>
-                                    <td>78.8%</td>
-                                    <td>65.0%</td>
-                                    <td>70.0%</td>
-                                    <td>70.7%</td>
-                                </tr>
-                                <tr>
-                                    <td>2019</td>
-                                    <td>79.0%</td>
-                                    <td>65.5%</td>
-                                    <td>70.5%</td>
-                                    <td>71.0%</td>
-                                </tr>
-                                <tr>
-                                    <td>2020</td>
-                                    <td>79.3%</td>
-                                    <td>66.0%</td>
-                                    <td>71.0%</td>
-                                    <td>71.3%</td>
-                                </tr>
-                                <tr>
-                                    <td>2021</td>
-                                    <td>79.5%</td>
-                                    <td>66.5%</td>
-                                    <td>71.5%</td>
-                                    <td>71.5%</td>
-                                </tr>
-                                <tr>
-                                    <td>2022</td>
-                                    <td>79.7%</td>
-                                    <td>67.0%</td>
-                                    <td>72.0%</td>
-                                    <td>71.8%</td>
-                                </tr>
-                                <tr>
-                                    <td>2023</td>
-                                    <td>80.0%</td>
-                                    <td>67.5%</td>
-                                    <td>72.5%</td>
-                                    <td>72.1%</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section> -->
-            <hr>
-
-            <div class="container">
-                <h2>Buscar Escolas por Endereço e CEP</h2>
-                <div class="form-group">
-                    <label for="address-input">Endereço:</label>
-                    <input type="text" id="address-input" class="form-control" placeholder="Digite o Endereço">
-                </div>
-                <div class="form-group">
-                    <label for="neighborhood-input">Bairro:</label>
-                    <input type="text" id="neighborhood-input" class="form-control" placeholder="Digite o Bairro">
-                </div>
-                <div class="form-group">
-                    <label for="cep-input">CEP:</label>
-                    <input type="text" id="cep-input" class="form-control" placeholder="Digite o CEP">
-                </div>
-                <button onclick="searchSchools()" class="btn btn-primary mt-3">Buscar</button>
-
-                <div id="school-results" class="mt-4">
-                    <!-- Schools will be displayed here -->
-                </div>
-
-                <h3>Mapa de Canaã dos Carajás</h3>
-                <div id="map" class="mt-4"
-                    style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
-                    <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31274.223616217325!2d-49.87277499085988!3d-6.4935819731227285!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x92d9dfee1bcfb899%3A0xd9b72be0bcafe53b!2sCana%C3%A3%20dos%20Caraj%C3%A1s%2C%20PA!5e0!3m2!1spt-BR!2sbr!4v1696082853663!5m2!1spt-BR!2sbr"
-                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;"
-                        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
-                </div>
-
-            </div>
-            <hr>
-            <!-- Footer -->
-            <footer class="footer bg-dark text-white text-center py-3 fixed-bottom w-100">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-6 text-start">
-                            <p class="mb-0">&copy; 2024 Semed Canaã</p>
-                        </div>
-                        <div class="col-6 text-end">
-                            <p class="mb-0">&reg; SEPROT - SEMED V.3</p>
-                        </div>
-                    </div>
-                </div>
-            </footer>
-
-            <!-- Scripts -->
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-            <script src="{% static 'js/search.js' %}"></script> <!-- This assumes you have a search.js file -->
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
-
-            <!-- Bootstrap JS -->
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-
-            <!-- <script>
-                $(document).ready(function(){
-                    $('#cpf').mask('000.000.000-00');
-                });
-            </script> -->
-
-
-    <!-- Verificação CPF via AJAX -->
-<script>
-    
-   $(document).ready(function () {
-    $('#verificarCpfBtn').click(function () {
-        var cpf = $('#cpf').val();
-
-        console.log("CPF inserido: " + cpf);
-
-        // Faz a requisição AJAX para verificar o CPF
-        $.ajax({
-            url: "{% url 'verificar_cpf_ajax' %}",
-            type: "POST",
-            data: {
-                'cpf': cpf,
-                'csrfmiddlewaretoken': '{{ csrf_token }}'
-            },
-            success: function (response) {
-                console.log("Resposta recebida:", response);
-
-                // Limpa o campo CPF após o envio da solicitação
-                $('#cpf').val('');  // Clear the CPF field
-
-                if (response.status === 'existe') {
-                    // Mostra alerta dentro do modal informando que o CPF já existe
-                    alert("Este CPF já está cadastrado no sistema.");
-                } else if (response.status === 'nao_existe') {
-                    // Preenche automaticamente o campo de CPF no formulário de cadastro e o desabilita
-                    $('#cpf').val(cpf).prop('readonly', true);
-                    $('#cadastroModal').modal('show');
-                    $('#verificarCpfModal').modal('hide');
-                } else {
-                    alert("Erro ao verificar o CPF.");
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Erro na requisição AJAX:", error);
-                // Limpa o campo CPF após o erro
-                $('#cpf').val('');  // Clear the CPF field
-                alert("Erro na verificação do CPF.");
-            }
-        });
-    });
-});
-
-
-
-</script>
-
-
-
-<script>
-    function searchSchools() {
-        const address = document.getElementById('address-input').value;
-        const neighborhood = document.getElementById('neighborhood-input').value;
-        const cep = document.getElementById('cep-input').value;
-    
-        const queryString = new URLSearchParams({ address, neighborhood, cep }).toString();
-    
-        fetch(`/search-schools/?${queryString}`)
-            .then(response => response.json())
-            .then(data => {
-                const resultsDiv = document.getElementById('school-results');
-                resultsDiv.innerHTML = '';
-    
-                if (data.schools.length > 0) {
-                    data.schools.forEach(school => {
-                        const schoolItem = document.createElement('div');
-                        schoolItem.classList.add('school-item');
-                        schoolItem.innerHTML = `<p><strong>${school.name}</strong> - ${school.neighborhood} - ${school.address} - CEP: ${school.cep}</p>`;
-                        resultsDiv.appendChild(schoolItem);
-                    });
-                } else {
-                    resultsDiv.innerHTML = '<p>Nenhuma escola encontrada para os critérios informados.</p>';
-                }
-            })
-            .catch(error => console.error('Erro:', error));
-    }
-    </script>
-
-    <!-- Script to handle the timer -->
-<script>
-    // Function to start the 20-minute countdown
-    function startTimer(duration, display) {
-        let timer = duration, minutes, seconds;
-        const interval = setInterval(function () {
-            minutes = parseInt(timer / 60, 10);
-            seconds = parseInt(timer % 60, 10);
-
-            minutes = minutes < 10 ? "0" + minutes : minutes;
-            seconds = seconds < 10 ? "0" + seconds : seconds;
-
-            display.textContent = minutes + ":" + seconds;
-
-            if (--timer < 0) {
-                clearInterval(interval); // Clear the interval when the time runs out
-                $('#cadastroModal').modal('hide'); // Close the modal
-                alert('O tempo para o preenchimento do cadastro expirou.'); // Optional: alert the user
-            }
-        }, 1000);
-    }
-
-    // When the modal is shown, start the timer
-    $('#cadastroModal').on('shown.bs.modal', function () {
-        const twentyMinutes = 60 * 20, // 20 minutes in seconds
-            display = document.querySelector('#timer');
-        startTimer(twentyMinutes, display);
-    });
-
-</script>
-
-
-<!-- Script to insert current date -->
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Function to format the date
-        function formatDate(date) {
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            return date.toLocaleDateString('pt-BR', options);
-        }
-
-        // Get the current date and format it
-        const currentDate = new Date();
-        document.getElementById("currentDate").textContent = formatDate(currentDate);
-    });
-</script>
-
-<script>
-    function searchBairro() {
-    const bairroInput = document.getElementById('bairro').value;
-
-    if (bairroInput.length > 2) { // Start searching when more than 2 characters are typed
-        fetch(`/search-bairro/?query=${bairroInput}`)
-            .then(response => response.json())
-            .then(data => {
-                const resultsDiv = document.getElementById('bairro-results');
-                resultsDiv.innerHTML = ''; // Clear previous results
-
-                if (data.results.length > 0) {
-                    data.results.forEach(bairro => {
-                        const item = document.createElement('div');
-                        item.textContent = `${bairro.logradouro_nome} - ${bairro.bairro_distrito} (CEP: ${bairro.cep})`;
-                        resultsDiv.appendChild(item);
-                    });
-                } else {
-                    resultsDiv.innerHTML = '<p>Nenhum bairro encontrado.</p>';
-                }
-            })
-            .catch(error => console.error('Erro:', error));
-    }
-}
-
-</script>
-
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-    fetch('/get-bairros/')  // URL pointing to your Django view
-        .then(response => response.json())
-        .then(data => {
-            const bairroSelect = document.getElementById('bairro');
-            data.bairros.forEach(bairro => {
-                const option = document.createElement('option');
-                option.value = bairro.id;
-                option.text = `${bairro.bairro_distrito}`;
-                bairroSelect.appendChild(option);
+        <!-- Script para exibir a mensagem de confirmação -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                {% if messages %}
+                    {% for message in messages %}
+                        Swal.fire({
+                            icon: '{% if message.tags == "success" %}success{% else %}error{% endif %}',
+                            title: '{{ message }}',
+                            showConfirmButton: true,
+                            timer: 3000
+                        });
+                    {% endfor %}
+                {% endif %}
             });
-        })
-        .catch(error => console.error('Erro ao buscar os bairros:', error));
-});
-
-</script>
+        </script>
 
 
-<script>
-    function toggleSpecialNeeds(isEnabled) {
-    const selectField = document.getElementById('necessidade_especial_detalhe');
-    
-    if (isEnabled) {
-        selectField.removeAttribute('disabled');
-    } else {
-        selectField.setAttribute('disabled', true);
-        selectField.value = ''; // Clear the select field when disabled
-    }
-}
-
-// By default, the "Não" option will disable the select field when the page loads
-window.onload = function() {
-    toggleSpecialNeeds(false);
-};
 
 
-</script>
+    <br>
+    <br>
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
 
 
-<script>
+
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-white text-center py-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-6 text-start">
+                    <p class="mb-0">&copy; 2024 Semed Canaã</p>
+                </div>
+                <div class="col-6 text-end">
+                    <p class="mb-0">SEPROT - V.4.3</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!--Mascara cpf-->
+    <script>
+        $(document).ready(function () {
+            $('#cpf').mask('000.000.000-00');
+            $('#telefone').mask('(00) 00000-0000');
+        });
+    </script>
+    <!--fim do js-->
+
+    <!-- <script>
     $(document).ready(function() {
-        $('#disciplinas').select2({
-            placeholder: "Selecione as disciplinas",
-            allowClear: true,
-            closeOnSelect: false // Keep the dropdown open after selecting an item
-        }).on('change', function() {
-            // Hide all selected options except the first one
-            var selectedOptions = $(this).find('option:selected');
-            
-            // Hide all selected choices, except the first
-            selectedOptions.each(function(index) {
-                if (index > 0) {
-                    $(this).attr('data-hidden', true); // Mark as hidden
-                } else {
-                    $(this).removeAttr('data-hidden'); // Keep the first visible
-                }
-            });
+        // Função para desabilitar os campos de Dados Pessoais
+        function disablePersonalFields() {
+            $('#nomeCompleto, #email, #telefone, #cargo, #lotacao').prop('disabled', true);
+        }
 
-            // Refresh the display of the select field
-            $(this).trigger('change.select2');
+        // Função para habilitar os campos de Dados Pessoais
+        function enablePersonalFields() {
+            $('#nomeCompleto, #email, #telefone, #cargo, #lotacao').prop('disabled', false);
+        }
+
+        // Evento de quando o campo CPF perde o foco (blur event)
+        $('#cpf').on('blur', function() {
+            var cpf = $(this).val();
+
+            if (cpf) {
+                // Faz a requisição AJAX para verificar o CPF
+                $.ajax({
+                    url: '/verificar-cpf/',  // URL da sua view Django que verifica o CPF
+                    method: 'GET',
+                    data: {
+                        'cpf': cpf
+                    },
+                    success: function(response) {
+                        if (response.exists) {
+                            // Preencher os campos com os dados retornados e habilitar os campos
+                            $('#nomeCompleto').val(response.nome_completo);
+                            $('#email').val(response.email);
+                            $('#telefone').val(response.telefone);
+                            $('#cargo').val(response.cargo);
+                            $('#lotacao').val(response.lotacao);
+                            enablePersonalFields();
+                        } else {
+                            alert('CPF não encontrado.');
+                            disablePersonalFields();
+                        }
+                    },
+                    error: function() {
+                        alert('Erro ao buscar CPF.');
+                        disablePersonalFields();
+                    }
+                });
+            } else {
+                disablePersonalFields();  // Desabilita os campos se o CPF estiver vazio
+            }
         });
 
-        // Custom format to hide elements marked as hidden
-        function formatState(state) {
-            if (!state.id) {
-                return state.text; // optgroup
-            }
-            // If the option is marked as hidden, do not display it
-            if ($(state.element).attr('data-hidden')) {
-                return null;
-            }
-            return state.text;
-        }
-
-        $('#disciplinas').select2({
-            templateResult: formatState
-        });
-    });
-</script>
-
-
-<script>
-    function toggleDisciplinas(enable) {
-        const checkboxes = document.querySelectorAll('#disciplinas .form-check-input');
-        
-        checkboxes.forEach(checkbox => {
-            checkbox.disabled = !enable; // Enable or disable all checkboxes
-        });
-
-        if (!enable) {
-            // Clear any selections if disabling
-            checkboxes.forEach(checkbox => checkbox.checked = false);
-        }
-    }
-
-    // Ensure checkboxes are disabled by default when the page loads
-    window.onload = function() {
-        toggleDisciplinas(false);
-    };
-</script>
-
-
-<script>
-    document.getElementById('termos_condicoes').addEventListener('change', function() {
-        const submitButton = document.getElementById('submitButton');
-        if (this.checked) {
-            submitButton.disabled = false;
-        } else {
-            submitButton.disabled = true;
-        }
-    });
-
-    document.getElementById('cadastroForm').addEventListener('submit', function(event) {
-        const termosCondicoesCheckbox = document.getElementById('termos_condicoes');
-        if (!termosCondicoesCheckbox.checked) {
-            event.preventDefault();  // Prevent form submission
-            termosCondicoesCheckbox.focus();  // Focus on the checkbox
-        }
-    });
-</script>
-
-<!-- JavaScript Senha-->
-<script>
-    function togglePassword(inputId, eyeIconId) {
-        var input = document.getElementById(inputId);
-        var eyeIcon = document.getElementById(eyeIconId);
-    
-        if (input.type === "password") {
-            input.type = "text";
-            eyeIcon.classList.remove("fa-eye");
-            eyeIcon.classList.add("fa-eye-slash");
-        } else {
-            input.type = "password";
-            eyeIcon.classList.remove("fa-eye-slash");
-            eyeIcon.classList.add("fa-eye");
-        }
-    }
-    </script>
-
-<!-- JavaScript -->
-<script>
-    function verificarIdade() {
-        const dataNascimento = new Date(document.getElementById('data_nascimento').value);
-        const dataLimite = new Date('2024-12-01');  // Data de verificação 01/12/2024
-        const idadeLimite15 = 15;
-        const idadeLimite18 = 18;
-    
-        // Calcula a idade no dia 01/12/2024
-        let idade = dataLimite.getFullYear() - dataNascimento.getFullYear();
-        const mes = dataLimite.getMonth() - dataNascimento.getMonth();
-        const dia = dataLimite.getDate() - dataNascimento.getDate();
-        
-        if (mes < 0 || (mes === 0 && dia < 0)) {
-            idade--;
-        }
-    
-        // Habilitar os botões "Sim" e "Não" conforme a idade
-        const radioSim = document.getElementById('maior_de_18_sim');
-        const radioNao = document.getElementById('maior_de_18_nao');
-        
-        if (idade >= idadeLimite15 && idade < idadeLimite18) {
-            // Se o candidato tiver 15 até 17 anos, marcar "Não" e desabilitar "Sim"
-            radioNao.checked = true;
-            radioSim.disabled = true;
-            radioNao.disabled = false;
-    
-            // Habilitar os campos do Responsável Legal
-            document.getElementById('nome_responsavel').disabled = false;
-            document.getElementById('cpf_responsavel').disabled = false;
-            document.getElementById('rg_responsavel').disabled = false;
-            document.getElementById('tipo_responsavel').disabled = false;
-    
-        } else if (idade >= idadeLimite18) {
-            // Se o candidato tiver 18 anos ou mais, marcar "Sim"
-            radioSim.checked = true;
-            radioSim.disabled = false;
-            radioNao.disabled = false;
-    
-            // Desabilitar os campos do Responsável Legal
-            document.getElementById('nome_responsavel').disabled = true;
-            document.getElementById('cpf_responsavel').disabled = true;
-            document.getElementById('rg_responsavel').disabled = true;
-            document.getElementById('tipo_responsavel').disabled = true;
-        } else {
-            // Se o candidato for menor de 15 anos, desabilitar ambos os radios e o formulário
-            radioSim.disabled = true;
-            radioNao.disabled = true;
-    
-            const form = document.getElementById('cadastroForm');
-            for (let i = 0; i < form.elements.length; i++) {
-                form.elements[i].disabled = true;
-            }
-            document.getElementById('fecharBtn').disabled = false;  // Habilitar o botão de fechar
-        }
-    }
-    </script>
-
-<!-- <script>
-    document.getElementById('registerButton').addEventListener('click', function(event) {
-        event.preventDefault();  // Prevent default behavior
-
-        let button = this;
-        let originalText = button.innerHTML;  // Store the original button text
-        let spinnerUrl = button.getAttribute('data-spinner-url');  // Get the spinner URL from the data attribute
-
-        // Check if spinner URL is correctly retrieved
-        if (spinnerUrl) {
-            // Change button innerHTML to a loading GIF
-            button.innerHTML = '<img src="/static/img/spinner.gif" alt="Carregando..." style="width: 30px; height: 30px;">';
-
-        } else {
-            console.error("Spinner URL not found");
-        }
-
-        // You can add a delay here or execute the modal showing logic
-        setTimeout(function() {
-            button.innerHTML = originalText;  // Restore the original text after some time
-        }, 5000);  // Restore the button text after 5 seconds
+        // Desabilitar campos ao carregar a página
+        disablePersonalFields();
     });
 </script> -->
 
-<script>
-    // Function to clear the CPF input field
-    function clearCpfModal() {
-        document.getElementById('cpfForm').reset(); // Reset the form (clears all fields)
-        document.getElementById('cpfErrorMessage').innerText = ''; // Clear any error messages
-    }
+        <script>
+            document.getElementById('consultaPublicaForm').addEventListener('submit', function(event) {
+            document.getElementById('nome_completo').disabled = false;
+            document.getElementById('email').disabled = false;
+            document.getElementById('telefone').disabled = false;
+            document.getElementById('cargo').disabled = false;
+            document.getElementById('lotacao').disabled = false;
+        });
 
-    // Function to close the modal and clear the data
-    function closeCpfModal() {
-        $('#cpfModal').modal('hide'); // Close the modal
-        clearCpfModal(); // Clear the modal fields
-    }
+        </script>
 
-    // Event listener for the "Cancelar" button
-    $('#cancelBtn').on('click', function() {
-        closeCpfModal();
-    });
 
-    // Event listener for when the modal is closed using the 'x' button or clicking outside
-    $('#cpfModal').on('hidden.bs.modal', function () {
-        clearCpfModal();
-    });
 
-    document.getElementById('verifyCpfBtn').addEventListener('click', function() {
-        var cpf = document.getElementById('cpfInput').value;
-        var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;  // Fetch CSRF token
+    <script>
+        // Objeto que mapeia TÍTULOS para CAPÍTULOS
+        const capitulosPorTitulo = {
+            "TÍTULO I": [
+                { value: "CAPÍTULO ÚNICO", text: "CAPÍTULO ÚNICO - DOS PRINCÍPIOS E FINS DA EDUCAÇÃO" }
+            ],
+            "TÍTULO II": [
+                { value: "CAPÍTULO I", text: "CAPÍTULO I - DA EDUCAÇÃO INFANTIL" },
+                { value: "CAPÍTULO II", text: "CAPÍTULO II - DO ENSINO FUNDAMENTAL" },
+                { value: "CAPÍTULO III", text: "CAPÍTULO III - DA EDUCAÇÃO DE JOVENS E ADULTOS" }
+            ],
+            "TÍTULO III": [
+                { value: "CAPÍTULO I", text: "CAPÍTULO I - DA ORGANIZAÇÃO ADMINISTRATIVA E PEDAGÓGICA" },
+                { value: "CAPÍTULO II", text: "CAPÍTULO II - DA ESTRUTURA" },
+                { value: "CAPÍTULO III", text: "CAPÍTULO III - DO CONSELHO ESCOLAR" },
+                { value: "CAPÍTULO IV", text: "CAPÍTULO IV - DA DIREÇÃO E VICE-DIREÇÃO" },
+                { value: "CAPÍTULO V", text: "CAPÍTULO V - DO SECRETÁRIO ESCOLAR E AGENTES ADMINISTRATIVOS " },
+                { value: "CAPÍTULO VI", text: "CAPÍTULO VI - DOS SERVIÇOS PEDAGÓGICOS E DE APOIO AO ALUNO" },
+                { value: "SEÇÃO I", text: "SEÇÃO I - DOS DEVERES DO SECRETÁRIO ESCOLAR E AGENTES ADMINISTRATIVOS" },
+                { value: "SUBSEÇÃO I", text: "SUBSEÇÃO I  - DOS DIREITOS" },
+                { value: "SUBSEÇÃO II", text: "SUBSEÇÃO II  - DO CONSELHO ESCOLAR" },
+                { value: "CAPÍTULO VI", text: "CAPÍTULO VI - DOS SERVIÇOS PEDAGÓGICOS E DE APOIO AO ALUNO" },
+                { value: "SEÇÃO I", text: "SEÇÃO I - DO SERVIÇO DE ORIENTAÇÃO EDUCACIONAL " },
+                { value: "SEÇÃO III", text: "SEÇÃO III - DO SERVIÇO DO PSICOPEDAGÓGICO" },
+                { value: "SEÇÃO IV", text: "SEÇÃO IV - DO SERVIÇO DE NUTRIÇÃO ESCOLAR" },
+                { value: "SEÇÃO V", text: "SEÇÃO V - DO SERVIÇO DE ATENDIMENTO EDUCACIONAL ESPECIALIZADO" },
+                { value: "CAPÍTULO VII", text: "CAPÍTULO VII - DO CORPO DOCENTE" },
+            ],
+            "TÍTULO IV": [
+                { value: "CAPÍTULO I", text: "CAPÍTULO I - DOS PAIS OU RESPONSÁVEIS" },
+                { value: "CAPÍTULO ÚNICO", text: "CAPÍTULO ÚNICO" },
+                { value: "SEÇÃO I", text: "SEÇÃO I - DOS DEVERES E DOS DIREITOS" },
+            ],
+            "TÍTULO V": [
+                { value: "CAPÍTULO I", text: "CAPÍTULO I - DO CONSELHO DE CLASSE" },
+                { value: "CAPÍTULO II", text: "CAPÍTULO II - DA BIBLIOTECA, BRINQUEDOTECA E SALA DE LEITURA" },
+                { value: "CAPITULO III", text: "CAPITULO III - DO LABORATÓRIO DE INFORMÁTICA" },
+                { value: "CAPITULO IV", text: "CAPITULO IV - DAS SALAS DE RECURSOS MULTIFUNCIONAIS" },
+                { value: "CAPÍTULO V", text: "CAPÍTULO V - DOS SERVIÇOS AUXILIARES" },
+                { value: "SEÇÃO I", text: "SEÇÃO I - DOS SERVIÇOS DE LIMPEZA" },
+                { value: "SUBSEÇÃO I", text: "SUBSEÇÃO I - DOS DIREITOS" },
+                { value: "SEÇÃO II", text: "SEÇÃO II - DOS SERVIÇOS DE COZINHA" },
+                { value: "SEÇÃO III", text: "SEÇÃO III - DOS SERVIÇOS DO AGENTE DE SEGURANÇA PATRIMONIAL" },
+                { value: "SUBSEÇÃO I", text: "SUBSEÇÃO I - DOS DIREITOS" },
+                { value: "SEÇÃO III", text: "SEÇÃO III - DAS VEDAÇÕES" },
+            ],
+            "TÍTULO VI": [
+                { value: "SUBSEÇÃO I", text: "SUBSEÇÃO I - DAS VEDAÇÕES" },
+            ],
+            "TÍTULO VII": [
+                { value: "CAPÍTULO I", text: "CAPÍTULO I - DO CURRÍCULO" },
+                { value: "CAPÍTULO II", text: "CAPÍTULO II - DO PROJETO POLÍTICO PEDAGÓGICO" },
+                { value: "CAPÍTULO III", text: "CAPÍTULO III - DAS ETAPAS, DOS NÍVEIS E MODALIDADES DE ENSINO" },
+                { value: "SEÇÃO I", text: "SEÇÃO I - DA EDUCAÇÃO INFANTIL" },
+                { value: "SEÇÃO II", text: "SEÇÃO II - DO ENSINO FUNDAMENTAL" },
+                { value: "SEÇÃO III", text: "SEÇÃO III - DA EDUCAÇÃO DE JOVENS E ADULTOS" },
+                { value: "SEÇÃO IV", text: "SEÇÃO IV - DA EDUCAÇÃO ESPECIAL" },
+                { value: "SEÇÃO V", text: "SEÇÃO V - DO ATENDIMENTO PEDAGÓGICO DOMICILIAR E HOSPITALAR" },
+                { value: "SEÇÃO VI", text: "SEÇÃO VI - DA EDUCAÇÃO DO CAMPO" },
+            ],
+            "TÍTULO VIII": [
+                { value: "CAPÍTULO I", text: "CAPÍTULO I - DO PERÍODO LETIVO" },
+                { value: "CAPÍTULO II", text: "CAPÍTULO II - DO CALENDÁRIO ESCOLAR" },
+                { value: "CAPÍTULO III", text: "CAPÍTULO III - DA MATRÍCULA" },
+                { value: "CAPITULO IV", text: "CAPITULO IV - DA DEPENDÊNCIA DE ESTUDOS" },
+                { value: "CAPITULO V", text: "CAPITULO V - DA CLASSIFICAÇÃO" },
+                { value: "SEÇÃO ÚNICA", text: "SEÇÃO ÚNICA - DOS TESTES CLASSIFICATÓRIOS" },
+                { value: "CAPITULO VII", text: "CAPITULO VII - DA RECLASSIFICAÇÃO" },
+                { value: "CAPITULO VIII", text: "CAPITULO VIII - DA ADAPTAÇÃO DE ESTUDOS" },
+                { value: "CAPITULO IX", text: "CAPITULO IX - DA TRANSFERÊNCIA" },
+            ],
+            "TÍTULO VIII": [
+                { value: "CAPÍTULO I", text: "CAPÍTULO I - DO PERÍODO LETIVO" },
+                { value: "CAPÍTULO II", text: "CAPÍTULO II - DO CALENDÁRIO ESCOLAR" },
+                { value: "CAPÍTULO III", text: "CAPÍTULO III - DA MATRÍCULA" },
+                { value: "CAPITULO IV", text: "CAPITULO IV - DA DEPENDÊNCIA DE ESTUDOS" },
+                { value: "CAPITULO V", text: "CAPITULO V - DA CLASSIFICAÇÃO" },
+                { value: "SEÇÃO ÚNICA", text: "SEÇÃO ÚNICA - DOS TESTES CLASSIFICATÓRIOS" },
+                { value: "CAPITULO VII", text: "CAPITULO VII - DA RECLASSIFICAÇÃO" },
+                { value: "CAPITULO VIII", text: "CAPITULO VIII - DA ADAPTAÇÃO DE ESTUDOS" },
+                { value: "CAPITULO IX", text: "CAPITULO IX - DA TRANSFERÊNCIA" },
+            ],
+            "TÍTULO IX": [
+                { value: "Art. 170", text: "Art. 170 - NÃO REALIZAREM A AVALIAÇÃO BIMESTRAL" },
+                { value: "CAPÍTULO I", text: "CAPÍTULO I - SISTEMA DE AVALIAÇÃO E APROVEITAMENTO ESCOLAR" },
+                { value: "CAPÍTULO II", text: "CAPÍTULO II - DO ENSINO FUNDAMENTAL" },
+                { value: "CAPÍTULO III", text: "CAPÍTULO III - DA EDUCAÇÃO ESPECIAL" },
+                { value: "CAPÍTULO IV", text: "CAPÍTULO IV - DA EDUCAÇÃO DE JOVENS E ADULTOS" },
+                { value: "CAPÍTULO V", text: "CAPÍTULO V - DA APURAÇÃO DA ASSIDUIDADE" },
+                { value: "CAPÍTULO VI", text: "CAPÍTULO VI - DA RECUPERAÇÃO DE ESTUDOS" },
+                { value: "CAPITULO VII", text: "CAPITULO VII - DA PROMOÇÃO" },
+                { value: "CAPÍTULO VIII", text: "CAPÍTULO VIII - DA EXPEDIÇÃO DE CERTIFICADOS E HISTÓRICO ESCOLAR" },
+                { value: "CAPÍTULO IX", text: "CAPÍTULO IX - DA AVALIAÇÃO INSTITUCIONAL" },
+            ],
+            "TÍTULO X": [
+                { value: "CAPÍTULO I", text: "CAPÍTULO I - DAS FINALIDADES" },
+                { value: "CAPÍTULO II", text: "CAPÍTULO II - DAS SANÇÕES" },
+            ],
+            "TÍTULO XI": [
+                { value: "DAS DISPOSIÇÕES GERAIS E TRANSITÓRIAS", text: "DAS DISPOSIÇÕES GERAIS E TRANSITÓRIAS" },
+            ],
 
-        // Send the CPF to the backend for verification
-        fetch('/verificar-cpf/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': csrfToken  // Include CSRF token
-            },
-            body: new URLSearchParams({
-                'cpf': cpf
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                // Redirect to the admin login page if CPF is valid and user is superuser
-                closeCpfModal(); // Close and clear modal before redirect
-                window.location.href = data.redirect_url;
-            } else {
-                // Display error message if user is not a superuser or CPF is invalid
-                document.getElementById('cpfErrorMessage').innerText = data.message || 'Erro ao verificar CPF.';
+        };
+
+       
+        // Referências aos campos de seleção
+        const tituloSelect = document.getElementById('titulo');
+        const capituloSelect = document.getElementById('capitulo');
+
+        // Evento para atualizar os capítulos quando um título é selecionado
+        tituloSelect.addEventListener('change', function () {
+            const tituloSelecionado = this.value;
+
+            // Limpar o campo de capítulos
+            capituloSelect.innerHTML = '<option value="" disabled selected>Selecione o CAPÍTULO</option>';
+
+            // Verificar se há capítulos para o título selecionado
+            if (capitulosPorTitulo[tituloSelecionado]) {
+                capitulosPorTitulo[tituloSelecionado].forEach(capitulo => {
+                    const option = document.createElement('option');
+                    option.value = capitulo.value;
+                    option.textContent = capitulo.text;
+                    capituloSelect.appendChild(option);
+                });
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            document.getElementById('cpfErrorMessage').innerText = 'Erro na verificação.';
+        
+        });
+    
+    </script>
+    <!--fim do js-->
+
+    <!-- JavaScript para controlar o comportamento dos campos -->
+    <script>
+        document.getElementById('titulo').addEventListener('change', function () {
+    // Obter o valor selecionado do select 'titulo'
+    var selectedTitulo = this.value;
+
+    // Seletores dos elementos a serem modificados
+    var capituloSelect = document.getElementById('capitulo');
+    var tipoAlteracaoSelect = document.getElementById('tipo_alteracao');
+
+    // Verifique se os elementos existem antes de tentar acessá-los
+    if (capituloSelect && tipoAlteracaoSelect) {
+        // Se o título selecionado for "INSERIR TÍTULO"
+        if (selectedTitulo === 'inserir-titulo') {
+            // Desabilitar o select de capítulos
+            capituloSelect.disabled = true;
+
+            // Selecionar "Inserção" no select de tipo de alteração e desabilitar
+            tipoAlteracaoSelect.value = 'insercao';
+            tipoAlteracaoSelect.disabled = true;
+        } else {
+            // Caso contrário, habilitar os selects
+            capituloSelect.disabled = false;
+            tipoAlteracaoSelect.disabled = false;
+            tipoAlteracaoSelect.value = '';  // Resetar a seleção de tipo de alteração
+        }
+    } else {
+        console.error('One of the elements (capitulo or tipo_alteracao) is missing.');
+    }
+});
+
+    </script>
+
+
+    <script>
+        $(document).ready(function () {
+            $('#cpf').mask('000.000.000-00');  // Máscara de CPF
+            $('#telefone').mask('(00) 00000-0000');  // Máscara de telefone
+        });
+
+    </script>
+
+    <!-- verificar cpf -->
+    <script>
+        document.getElementById('verifyCpfButton').addEventListener('click', function () {
+            var cpf = document.getElementById('cpfInput').value;
+
+            // Validação simples de CPF (você pode melhorar isso)
+            if (cpf === '' || cpf.length !== 14) {
+                document.getElementById('cpfError').style.display = 'block';
+                return;
+            }
+
+            // Enviar solicitação AJAX para verificar o CPF
+            $.ajax({
+                url: "{% url 'verificar_cpf_ajax' %}",  // Ajuste essa URL para apontar para a rota correta no Django
+                method: "POST",
+                data: {
+                    'cpf': cpf,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    if (response.valid) {
+                        // Redireciona para a página de login do administrador
+                        window.location.href = "{% url 'admin_login' %}";
+                    } else {
+                        document.getElementById('cpfError').style.display = 'block';
+                    }
+                },
+                error: function () {
+                    document.getElementById('cpfError').style.display = 'block';
+                }
+            });
+        });
+
+    </script>
+
+<!-- controla o comportamento de visualização da modal -->
+    <script>
+        $(document).ready(function () {
+            // Evento disparado quando a modal é fechada
+            $('#consultaPublicaModal').on('hidden.bs.modal', function () {
+                // Limpa todos os campos dentro da modal
+                $('#dadosModal').find('input, textarea').val('');
+            });
+        });
+    </script>
+
+<script>
+    $(document).ready(function () {
+        ['#consultaPublicaModal', '#consultaPublicaModal1', '#consultaPublicaModal2'].forEach(function(modalId) {
+            $(modalId).on('hidden.bs.modal', function () {
+                location.reload();
+            });
         });
     });
 </script>
 
+
+
+<!-- controla o comportamento de visualização da modal2 -->
+<script>
+    $(document).ready(function () {
+        // Evento disparado quando a modal é fechada
+        $('#consultaPublicaModal2').on('hidden.bs.modal', function () {
+            // Limpa todos os campos dentro da modal
+            $('#dadosModal').find('input, textarea').val('');
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        // Evento disparado quando a modal é fechada
+        $('#consultaPublicaModal2').on('hidden.bs.modal', function () {
+            location.reload(); // Atualiza a página para limpar os dados
+        });
+    });
+</script>
+<!-- Fim dos dois elementos -->
 
 
 

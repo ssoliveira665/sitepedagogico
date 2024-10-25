@@ -327,3 +327,106 @@ class User(AbstractBaseUser):
     def __str__(self):
         return self.cpf
 #**********************************************************************************************************
+
+class Funcionario(models.Model):
+    nome_completo = models.CharField(max_length=255)
+    rg = models.CharField(max_length=20)
+    cpf = models.CharField(max_length=14, unique=True)
+    telefone = models.CharField(max_length=15)
+    email = models.EmailField(max_length=255)
+    cargo = models.CharField(max_length=100)
+    lotacao = models.CharField(max_length=100)  # Lotação refers to the work location or department
+
+    def __str__(self):
+        return self.nome_completo
+#**********************************************************************************************************
+class RegimentoCadastro(models.Model):
+    TITULO_CHOICES = [
+        ('TÍTULO I', 'TÍTULO I - DAS DISPOSIÇÕES PRELIMINARES'),
+        ('TÍTULO II', 'TÍTULO II - DAS FINALIDADES E OBJETIVOS DA EDUCAÇÃO BÁSICA'),
+        ('TÍTULO III', 'TÍTULO III - DA ORGANIZAÇÃO DA INSTITUIÇÃO'),
+        ('TÍTULO IV', 'TÍTULO IV - DOS PAIS OU RESPONSÁVEIS'),
+        ('TÍTULO V', 'TÍTULO V - DAS DEMAIS ORGANIZAÇÃO DA INSTITUIÇÃO'),
+        ('TÍTULO VI', 'TÍTULO VI - DA ADMINISTRAÇÃO PESSOAL'),
+        ('TÍTULO VII', 'TÍTULO VII - DA ORGANIZAÇÃO DIDÁTICA - PEDAGÓGICA'),
+        ('TÍTULO VIII', 'TÍTULO VIII - DO REGIME DE FUNCIONAMENTO'),
+        ('TÍTULO IX', 'TÍTULO IX - DA VERIFICAÇÃO DO RENDIMENTO E AVALIAÇÃO'),
+        ('TÍTULO X', 'TÍTULO X - DO REGIME DISCIPLINAR'),
+        ('TÍTULO XI', 'TÍTULO XI - DAS DISPOSIÇÕES GERAIS E TRANSITÓRIAS'),
+        # Adicione os outros títulos conforme necessário
+    ]
+
+    CAPITULO_CHOICES = [
+        ('CAPÍTULO ÚNICO', 'CAPÍTULO ÚNICO - DOS PRINCÍPIOS E FINS DA EDUCAÇÃO'),
+        ('CAPÍTULO I', 'CAPÍTULO I - DA EDUCAÇÃO INFANTIL'),
+        ('CAPÍTULO II', 'CAPÍTULO II - DO ENSINO FUNDAMENTAL'),
+        ('CAPÍTULO III', 'CAPÍTULO III - DA EDUCAÇÃO DE JOVENS E ADULTOS'),
+        # Add more as necessary, depending on the `titulo` selected
+    ]
+    
+    TIPO_ALTERACAO_CHOICES = [
+        ('supressao', 'Supressão'),
+        ('insercao', 'Inserção'),
+        ('edicao', 'Alteração'),
+        ('exclusao', 'Exclusão'),
+    ]
+
+    STATUS_CHOICES = [
+        ('pendente', 'Pendente'),
+        ('aprovado', 'Aprovado'),
+        ('rejeitado', 'Rejeitado'),
+    ]
+    
+    titulo = models.CharField(max_length=255)
+    capitulo = models.CharField(max_length=255)
+    tipo_alteracao = models.CharField(max_length=50)
+    justificativa = models.TextField()
+    nome_completo = models.CharField(max_length=255)
+    email = models.EmailField()
+    cpf = models.CharField(max_length=14)
+    telefone = models.CharField(max_length=20)
+    cargo = models.CharField(max_length=255)
+    lotacao = models.CharField(max_length=255)
+    observacoes_adicionais = models.TextField(null=True, blank=True)
+    data_submissao = models.DateTimeField(auto_now_add=True)  # Automatic timestamp on creation
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pendente')
+
+    def __str__(self):
+        return self.titulo
+#**********************************************************************************************************
+from django.db import models
+
+class Regimento(models.Model):
+    titulo = models.CharField(max_length=200)
+    capitulo = models.CharField(max_length=200)
+    tipo_alteracao = models.CharField(max_length=100)
+    justificativa = models.TextField()
+    nome_completo = models.CharField(max_length=200)
+    cpf = models.CharField(max_length=14)
+    email = models.EmailField()
+    telefone = models.CharField(max_length=15)
+    cargo = models.CharField(max_length=100)
+    lotacao = models.CharField(max_length=100)
+    observacoes_adicionais = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.titulo
+#**********************************************************************************************************
+
+class Registro(models.Model):
+    titulo = models.CharField(max_length=255)
+    capitulo = models.CharField(max_length=255)
+    tipo_alteracao = models.CharField(max_length=100, choices=[('insercao', 'Inserção'), ('alteracao', 'Alteração'), ('supressao', 'Supressão'), ('exclusao', 'Exclusão')])
+    justificativa = models.TextField()
+    nome_completo = models.CharField(max_length=255)
+    email = models.EmailField()
+    cpf = models.CharField(max_length=14)  # Mascara de CPF pode ser aplicada no frontend
+    telefone = models.CharField(max_length=15)
+    cargo = models.CharField(max_length=255)
+    lotacao = models.CharField(max_length=255)
+    observacoes_adicionais = models.TextField(blank=True, null=True)
+    data_submissao = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.titulo
+#**********************************************************************************************************
